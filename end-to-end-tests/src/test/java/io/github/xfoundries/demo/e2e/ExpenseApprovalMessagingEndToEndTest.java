@@ -283,7 +283,7 @@ class ExpenseApprovalMessagingEndToEndTest {
         return queryString(
                 EXPENSE_DATABASE,
                 "select event_id from jfoundry_outbox_event "
-                        + "where aggregate_id = ? and payload_type = 'ExpenseClaimApprovedV1'",
+                        + "where aggregate_id = ? and payload_type = 'expense-approval.claim-approved.v1'",
                 claimId);
     }
 
@@ -312,7 +312,7 @@ class ExpenseApprovalMessagingEndToEndTest {
         return queryInt(
                 EXPENSE_DATABASE,
                 "select count(*) from jfoundry_outbox_event "
-                        + "where aggregate_id = ? and payload_type = 'ExpenseClaimApprovedV1'",
+                        + "where aggregate_id = ? and payload_type = 'expense-approval.claim-approved.v1'",
                 claimId);
     }
 

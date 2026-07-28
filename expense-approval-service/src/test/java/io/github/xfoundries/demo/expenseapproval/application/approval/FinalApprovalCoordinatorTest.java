@@ -1,6 +1,7 @@
 package io.github.xfoundries.demo.expenseapproval.application.approval;
 
 import java.math.BigDecimal;
+import java.lang.reflect.Modifier;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -27,17 +28,15 @@ import io.github.xfoundries.demo.expenseapproval.domain.policy.MonthlyExpenseLim
 import io.github.xfoundries.demo.expenseapproval.domain.policy.MonthlyExpenseLimitPolicy;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
 import org.jfoundry.application.lock.DistributedLockClient;
+import org.jfoundry.application.ApplicationService;
 import org.jfoundry.application.lock.LockExecutor;
 import org.jfoundry.application.lock.LockHandle;
-import org.jfoundry.application.outbox.OutboxAppendRequest;
-import org.jfoundry.application.outbox.OutboxTemplate;
 import org.jfoundry.application.transaction.TransactionCallback;
 import org.jfoundry.application.transaction.TransactionOptions;
 import org.jfoundry.application.transaction.TransactionRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -58,8 +57,6 @@ class FinalApprovalCoordinatorTest {
 
     @Mock ExpenseClaimRepository repository;
     @Mock ApprovedExpenseAmountPort approvedExpenseAmountPort;
-    @Mock OutboxTemplate outboxTemplate;
-
     private List<String> boundaries;
     private RecordingTransactionRunner transactions;
     private FinalApprovalCoordinator coordinator;
@@ -79,15 +76,19 @@ class FinalApprovalCoordinatorTest {
                 new MonthlyExpenseLimitPolicy(Money.cny("10000.00")),
                 locks,
                 transactions,
-                outboxTemplate,
-                new ExpenseClaimApprovedTranslator(),
                 Clock.fixed(NOW, ZoneOffset.UTC),
                 BUSINESS_ZONE,
                 Duration.ofSeconds(2));
     }
 
     @Test
-    void finalManagerApprovalChecksLimitAndAppendsOutboxInsideTheLock() {
+    void participatesInApplicationServiceDomainEventDispatch() {
+        assertThat(FinalApprovalCoordinator.class.isAnnotationPresent(ApplicationService.class)).isTrue();
+        assertThat(Modifier.isFinal(FinalApprovalCoordinator.class.getModifiers())).isFalse();
+    }
+
+    @Test
+    void finalManagerApprovalChecksLimitAndPersistsTheAggregateInsideTheLock() {
         ExpenseClaim claim = submittedClaim("claim-low", "2000.00");
         when(repository.findById(claim.id())).thenReturn(claim);
         when(approvedExpenseAmountPort.totalApproved(any(), any(), any()))
@@ -103,12 +104,6 @@ class FinalApprovalCoordinatorTest {
                 "transaction",
                 "unlock:expense-approval:monthly-limit:employee-1:2026-08");
         verify(repository).modify(claim);
-        ArgumentCaptor<OutboxAppendRequest> request =
-                ArgumentCaptor.forClass(OutboxAppendRequest.class);
-        verify(outboxTemplate).append(request.capture());
-        assertThat(request.getValue().topic()).isEqualTo("expense-approval.events.v1");
-        assertThat(request.getValue().payloadKey()).isEqualTo("claim-low");
-        assertThat(request.getValue().payloadType()).isEqualTo("ExpenseClaimApprovedV1");
     }
 
     @Test
@@ -126,7 +121,6 @@ class FinalApprovalCoordinatorTest {
 
         assertThat(claim.state()).isEqualTo(ClaimState.PENDING_FINANCE);
         verify(repository, never()).modify(claim);
-        verify(outboxTemplate, never()).append(any());
     }
 
     @Test
@@ -141,7 +135,6 @@ class FinalApprovalCoordinatorTest {
         assertThat(boundaries).containsExactly("transaction", "transaction");
         verify(repository).modify(claim);
         verify(approvedExpenseAmountPort, never()).totalApproved(any(), any(), any());
-        verify(outboxTemplate, never()).append(any());
     }
 
     private static ExpenseClaim submittedClaim(String id, String amount) {
