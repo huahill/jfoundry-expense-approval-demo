@@ -26,7 +26,7 @@ import io.github.xfoundries.demo.expenseapproval.application.payment.port.out.Pa
 import io.github.xfoundries.demo.expenseapproval.application.claim.query.ExpenseClaimQueryService;
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
-import org.jfoundry.application.lock.LockTemplate;
+import org.jfoundry.application.lock.LockExecutor;
 import org.jfoundry.application.inbox.InboxTemplate;
 import org.jfoundry.application.outbox.OutboxTemplate;
 import org.jfoundry.application.transaction.TransactionRunner;
@@ -89,7 +89,7 @@ public class ApplicationConfiguration {
     FinalApprovalCoordinator finalApprovalCoordinator(
             ExpenseClaimRepository repository,
             ApprovedExpenseAmountPort approvedExpenseAmountPort,
-            LockTemplate lockTemplate,
+            LockExecutor lockExecutor,
             TransactionRunner transactionRunner,
             OutboxTemplate outboxTemplate,
             Clock applicationClock) {
@@ -97,7 +97,7 @@ public class ApplicationConfiguration {
                 repository,
                 approvedExpenseAmountPort,
                 new MonthlyExpenseLimitPolicy(Money.cny("10000.00")),
-                lockTemplate,
+                lockExecutor,
                 transactionRunner,
                 outboxTemplate,
                 new ExpenseClaimApprovedTranslator(),

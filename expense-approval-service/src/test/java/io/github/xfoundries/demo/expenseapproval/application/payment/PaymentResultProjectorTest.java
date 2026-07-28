@@ -7,6 +7,7 @@ import io.github.xfoundries.demo.contracts.ReimbursementPaidV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaymentFailedV1;
 import io.github.xfoundries.demo.expenseapproval.application.payment.port.out.PaymentStatusProjectionPort;
 import io.github.xfoundries.demo.expenseapproval.application.payment.port.out.PaymentStatusProjectionPort.PaymentStatusProjection;
+import org.jfoundry.application.inbox.InboxClaim;
 import org.jfoundry.application.inbox.InboxMessageStore;
 import org.jfoundry.application.inbox.InboxTemplate;
 import org.jfoundry.application.transaction.TransactionCallback;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,8 +39,9 @@ class PaymentResultProjectorTest {
 
     @Test
     void projectsPaidEventOnlyOnce() throws Exception {
-        when(inboxStore.tryStartProcessing(
-                "paid-event", PaymentResultProjector.CONSUMER_NAME)).thenReturn(true, false);
+        when(inboxStore.claim(any(), any(), any(), any()))
+                .thenReturn(InboxClaim.fresh("claim-1"), InboxClaim.duplicate());
+        when(inboxStore.markProcessed(any(), any(), any(), any())).thenReturn(true);
         EventEnvelope<ReimbursementPaidV1> event = EventEnvelope.create(
                 "paid-event", "ReimbursementPaid", 1, NOW, "claim-1", "approval-event",
                 "claim-1", new ReimbursementPaidV1("claim-1", "payment-1", NOW));
@@ -55,8 +58,8 @@ class PaymentResultProjectorTest {
 
     @Test
     void mapsPaymentFailureDetails() throws Exception {
-        when(inboxStore.tryStartProcessing(
-                "failed-event", PaymentResultProjector.CONSUMER_NAME)).thenReturn(true);
+        when(inboxStore.claim(any(), any(), any(), any())).thenReturn(InboxClaim.fresh("claim-1"));
+        when(inboxStore.markProcessed(any(), any(), any(), any())).thenReturn(true);
         EventEnvelope<ReimbursementPaymentFailedV1> event = EventEnvelope.create(
                 "failed-event", "ReimbursementPaymentFailed", 1, NOW, "claim-1", "approval-event",
                 "claim-1", new ReimbursementPaymentFailedV1(

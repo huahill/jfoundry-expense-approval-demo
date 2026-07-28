@@ -7,6 +7,7 @@ import io.github.xfoundries.demo.contracts.ReimbursementPaidV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaymentFailedV1;
 import io.github.xfoundries.demo.expenseapproval.application.payment.port.out.PaymentStatusProjectionPort;
 import io.github.xfoundries.demo.expenseapproval.application.payment.port.out.PaymentStatusProjectionPort.PaymentStatusProjection;
+import org.jfoundry.application.inbox.InboxExecutionResult;
 import org.jfoundry.application.inbox.InboxTemplate;
 
 public class PaymentResultProjector {
@@ -39,6 +40,6 @@ public class PaymentResultProjector {
 
     private boolean project(String eventId, PaymentStatusProjection projection) throws Exception {
         return inboxTemplate.executeOnce(
-                eventId, CONSUMER_NAME, () -> projectionPort.upsert(projection));
+                eventId, CONSUMER_NAME, () -> projectionPort.upsert(projection)) == InboxExecutionResult.PROCESSED;
     }
 }
