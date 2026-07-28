@@ -37,6 +37,11 @@ expense-approval:
     kafka-listener-enabled: ${EXPENSE_APPROVAL_KAFKA_LISTENER_ENABLED:false}
 
 jfoundry:
+  domain:
+    event:
+      dispatch:
+        outbox:
+          enabled: true
   outbox:
     dispatcher:
       mode: ${JFOUNDRY_OUTBOX_DISPATCHER_MODE:none}

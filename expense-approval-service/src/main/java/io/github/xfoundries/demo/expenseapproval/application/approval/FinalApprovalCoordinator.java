@@ -5,45 +5,36 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.YearMonth;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Objects;
 
-import io.github.xfoundries.demo.contracts.EventEnvelope;
-import io.github.xfoundries.demo.contracts.ExpenseClaimApprovedV1;
 import io.github.xfoundries.demo.expenseapproval.application.approval.port.out.ApprovedExpenseAmountPort;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.ApproveExpenseClaimByFinanceCommand;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.ApproveExpenseClaimByManagerCommand;
 import io.github.xfoundries.demo.expenseapproval.application.identity.ApprovalActor;
 import io.github.xfoundries.demo.expenseapproval.application.identity.ApprovalRole;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaim;
-import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimApproved;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
 import io.github.xfoundries.demo.expenseapproval.domain.policy.MonthlyExpenseLimitPolicy;
+import org.jfoundry.application.ApplicationService;
 import org.jfoundry.application.exception.ExternalAccessException;
 import org.jfoundry.application.exception.InvalidArgumentException;
 import org.jfoundry.application.exception.NotFoundException;
 import org.jfoundry.application.lock.LockExecutor;
 import org.jfoundry.application.lock.LockKey;
 import org.jfoundry.application.lock.LockOptions;
-import org.jfoundry.application.outbox.OutboxAppendRequest;
-import org.jfoundry.application.outbox.OutboxTemplate;
 import org.jfoundry.application.transaction.TransactionCallback;
 import org.jfoundry.application.transaction.TransactionRunner;
-import org.jmolecules.event.types.DomainEvent;
 
-public final class FinalApprovalCoordinator {
-
-    private static final String OUTBOX_TOPIC = "expense-approval.events.v1";
+@ApplicationService
+public class FinalApprovalCoordinator {
 
     private final ExpenseClaimRepository repository;
     private final ApprovedExpenseAmountPort approvedExpenseAmountPort;
     private final MonthlyExpenseLimitPolicy limitPolicy;
     private final LockExecutor lockExecutor;
     private final TransactionRunner transactionRunner;
-    private final OutboxTemplate outboxTemplate;
-    private final ExpenseClaimApprovedTranslator translator;
     private final Clock clock;
     private final ZoneId businessZone;
     private final LockOptions lockOptions;
@@ -54,8 +45,6 @@ public final class FinalApprovalCoordinator {
             MonthlyExpenseLimitPolicy limitPolicy,
             LockExecutor lockExecutor,
             TransactionRunner transactionRunner,
-            OutboxTemplate outboxTemplate,
-            ExpenseClaimApprovedTranslator translator,
             Clock clock,
             ZoneId businessZone,
             Duration lockWaitTime) {
@@ -64,8 +53,6 @@ public final class FinalApprovalCoordinator {
         this.limitPolicy = Objects.requireNonNull(limitPolicy);
         this.lockExecutor = Objects.requireNonNull(lockExecutor);
         this.transactionRunner = Objects.requireNonNull(transactionRunner);
-        this.outboxTemplate = Objects.requireNonNull(outboxTemplate);
-        this.translator = Objects.requireNonNull(translator);
         this.clock = Objects.requireNonNull(clock);
         this.businessZone = Objects.requireNonNull(businessZone);
         this.lockOptions = LockOptions.builder()
@@ -149,25 +136,6 @@ public final class FinalApprovalCoordinator {
             claim.approveByFinance(actor.userId(), approvedAt);
         }
         repository.modify(claim);
-        appendApprovalEvent(claim);
-    }
-
-    private void appendApprovalEvent(ExpenseClaim claim) {
-        List<DomainEvent> events = claim.drainEvents();
-        if (events.size() != 1 || !(events.getFirst() instanceof ExpenseClaimApproved approved)) {
-            throw new IllegalStateException("Final approval must record one ExpenseClaimApproved event");
-        }
-        EventEnvelope<ExpenseClaimApprovedV1> envelope = translator.translate(approved);
-        outboxTemplate.append(new OutboxAppendRequest(
-                envelope.eventId(),
-                OUTBOX_TOPIC,
-                claim.id().value(),
-                "ExpenseClaimApprovedV1",
-                envelope,
-                envelope.occurredAt(),
-                "ExpenseClaim",
-                claim.id().value(),
-                null));
     }
 
     private ExpenseClaim load(ExpenseClaimId id) {
