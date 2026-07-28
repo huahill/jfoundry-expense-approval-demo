@@ -20,7 +20,7 @@ import io.github.xfoundries.demo.expenseapproval.application.claim.command.handl
 import io.github.xfoundries.demo.expenseapproval.application.claim.query.ExpenseClaimQueries;
 import io.github.xfoundries.demo.expenseapproval.application.claim.query.ExpenseClaimViewReader;
 import io.github.xfoundries.demo.expenseapproval.application.approval.ApprovedExpenseAmountReader;
-import io.github.xfoundries.demo.expenseapproval.application.approval.ExpenseClaimApprovedTranslator;
+import io.github.xfoundries.demo.expenseapproval.application.approval.ExpenseClaimApprovedExternalizer;
 import io.github.xfoundries.demo.expenseapproval.application.payment.PaymentResultProjector;
 import io.github.xfoundries.demo.expenseapproval.application.payment.PaymentStatusProjectionStore;
 import io.github.xfoundries.demo.expenseapproval.application.claim.query.ExpenseClaimQueryService;
@@ -28,7 +28,6 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
 import org.jfoundry.application.lock.LockExecutor;
 import org.jfoundry.application.inbox.InboxTemplate;
-import org.jfoundry.application.outbox.OutboxTemplate;
 import org.jfoundry.application.transaction.TransactionRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -91,7 +90,6 @@ public class ApplicationConfiguration {
             ApprovedExpenseAmountReader approvedExpenseAmountReader,
             LockExecutor lockExecutor,
             TransactionRunner transactionRunner,
-            OutboxTemplate outboxTemplate,
             Clock applicationClock) {
         return new FinalApprovalCoordinator(
                 repository,
@@ -99,11 +97,14 @@ public class ApplicationConfiguration {
                 new MonthlyExpenseLimitPolicy(Money.cny("10000.00")),
                 lockExecutor,
                 transactionRunner,
-                outboxTemplate,
-                new ExpenseClaimApprovedTranslator(),
                 applicationClock,
                 ZoneId.of("Asia/Shanghai"),
                 Duration.ofSeconds(2));
+    }
+
+    @Bean
+    ExpenseClaimApprovedExternalizer expenseClaimApprovedExternalizer() {
+        return new ExpenseClaimApprovedExternalizer();
     }
 
     @Bean
