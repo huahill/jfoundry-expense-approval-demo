@@ -9,6 +9,7 @@ import io.github.xfoundries.demo.contracts.EventEnvelope;
 import io.github.xfoundries.demo.contracts.ExpenseClaimApprovedV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaidV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaymentFailedV1;
+import org.jfoundry.application.inbox.InboxClaim;
 import org.jfoundry.application.inbox.InboxMessageStore;
 import org.jfoundry.application.inbox.InboxTemplate;
 import org.jfoundry.application.outbox.OutboxAppendRequest;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,9 +47,9 @@ class ExpenseClaimApprovedProcessorTest {
 
     @Test
     void recordsOnePaidResultForDuplicateApprovalDelivery() throws Exception {
-        when(inboxStore.tryStartProcessing(
-                "approval-event", ExpenseClaimApprovedProcessor.CONSUMER_NAME))
-                .thenReturn(true, false);
+        when(inboxStore.claim(any(), any(), any(), any()))
+                .thenReturn(InboxClaim.fresh("claim-1"), InboxClaim.duplicate());
+        when(inboxStore.markProcessed(any(), any(), any(), any())).thenReturn(true);
         EventEnvelope<ExpenseClaimApprovedV1> approval = approval(new BigDecimal("8000.00"));
 
         assertThat(processor.process(approval)).isTrue();
@@ -71,8 +73,8 @@ class ExpenseClaimApprovedProcessorTest {
 
     @Test
     void recordsFailedResultAboveThePaymentLimit() throws Exception {
-        when(inboxStore.tryStartProcessing(
-                "approval-event", ExpenseClaimApprovedProcessor.CONSUMER_NAME)).thenReturn(true);
+        when(inboxStore.claim(any(), any(), any(), any())).thenReturn(InboxClaim.fresh("claim-1"));
+        when(inboxStore.markProcessed(any(), any(), any(), any())).thenReturn(true);
 
         assertThat(processor.process(approval(new BigDecimal("8000.01")))).isTrue();
 

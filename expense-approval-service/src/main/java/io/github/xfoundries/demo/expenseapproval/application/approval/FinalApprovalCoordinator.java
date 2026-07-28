@@ -24,8 +24,9 @@ import io.github.xfoundries.demo.expenseapproval.domain.policy.MonthlyExpenseLim
 import org.jfoundry.application.exception.ExternalAccessException;
 import org.jfoundry.application.exception.InvalidArgumentException;
 import org.jfoundry.application.exception.NotFoundException;
+import org.jfoundry.application.lock.LockExecutor;
+import org.jfoundry.application.lock.LockKey;
 import org.jfoundry.application.lock.LockOptions;
-import org.jfoundry.application.lock.LockTemplate;
 import org.jfoundry.application.outbox.OutboxAppendRequest;
 import org.jfoundry.application.outbox.OutboxTemplate;
 import org.jfoundry.application.transaction.TransactionCallback;
@@ -39,7 +40,7 @@ public final class FinalApprovalCoordinator {
     private final ExpenseClaimRepository repository;
     private final ApprovedExpenseAmountPort approvedExpenseAmountPort;
     private final MonthlyExpenseLimitPolicy limitPolicy;
-    private final LockTemplate lockTemplate;
+    private final LockExecutor lockExecutor;
     private final TransactionRunner transactionRunner;
     private final OutboxTemplate outboxTemplate;
     private final ExpenseClaimApprovedTranslator translator;
@@ -51,7 +52,7 @@ public final class FinalApprovalCoordinator {
             ExpenseClaimRepository repository,
             ApprovedExpenseAmountPort approvedExpenseAmountPort,
             MonthlyExpenseLimitPolicy limitPolicy,
-            LockTemplate lockTemplate,
+            LockExecutor lockExecutor,
             TransactionRunner transactionRunner,
             OutboxTemplate outboxTemplate,
             ExpenseClaimApprovedTranslator translator,
@@ -61,7 +62,7 @@ public final class FinalApprovalCoordinator {
         this.repository = Objects.requireNonNull(repository);
         this.approvedExpenseAmountPort = Objects.requireNonNull(approvedExpenseAmountPort);
         this.limitPolicy = Objects.requireNonNull(limitPolicy);
-        this.lockTemplate = Objects.requireNonNull(lockTemplate);
+        this.lockExecutor = Objects.requireNonNull(lockExecutor);
         this.transactionRunner = Objects.requireNonNull(transactionRunner);
         this.outboxTemplate = Objects.requireNonNull(outboxTemplate);
         this.translator = Objects.requireNonNull(translator);
@@ -108,7 +109,7 @@ public final class FinalApprovalCoordinator {
         String lockName = "expense-approval:monthly-limit:%s:%s"
                 .formatted(claimant.value(), month);
         try {
-            lockTemplate.execute(lockName, lockOptions, () -> {
+            lockExecutor.execute(new LockKey("expense-approval.monthly-limit", lockName), lockOptions, () -> {
                 inTransaction(() -> {
                     completeFinalApproval(claimId, actor, claimant, stage, approvedAt, month);
                     return null;
