@@ -10,8 +10,9 @@ import java.util.concurrent.TimeUnit;
 import io.github.xfoundries.demo.expenseapproval.boot.ExpenseApprovalApplication;
 import io.github.xfoundries.demo.expenseapproval.support.PostgreSqlIntegrationTest;
 import org.jfoundry.application.lock.DistributedLockUnavailableException;
+import org.jfoundry.application.lock.LockExecutor;
+import org.jfoundry.application.lock.LockKey;
 import org.jfoundry.application.lock.LockOptions;
-import org.jfoundry.application.lock.LockTemplate;
 import org.jfoundry.infrastructure.lock.redisson.RedissonDistributedLockClient;
 import org.junit.jupiter.api.Test;
 import org.redisson.Redisson;
@@ -24,16 +25,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = ExpenseApprovalApplication.class)
-class RedisLockTemplateIntegrationTest extends PostgreSqlIntegrationTest {
+class RedisLockExecutorIntegrationTest extends PostgreSqlIntegrationTest {
 
-    private static final String LOCK_KEY = "expense-approval:test:monthly-limit";
+    private static final LockKey LOCK_KEY = new LockKey("expense-approval.monthly-limit", "test");
 
-    @Autowired LockTemplate applicationLocks;
+    @Autowired LockExecutor applicationLocks;
 
     @Test
     void sameKeyIsMutuallyExclusiveAcrossTwoRedissonClients() throws Exception {
         RedissonClient secondRedisson = secondRedissonClient();
-        LockTemplate secondLocks = new LockTemplate(new RedissonDistributedLockClient(secondRedisson));
+        LockExecutor secondLocks = LockExecutor.create(new RedissonDistributedLockClient(secondRedisson));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         CountDownLatch firstEntered = new CountDownLatch(1);
         CountDownLatch releaseFirst = new CountDownLatch(1);
@@ -49,12 +50,12 @@ class RedisLockTemplateIntegrationTest extends PostgreSqlIntegrationTest {
             });
             assertThat(firstEntered.await(5, TimeUnit.SECONDS)).isTrue();
 
-            assertThatThrownBy(() -> secondLocks.execute(LOCK_KEY, () -> null))
+            assertThatThrownBy(() -> secondLocks.execute(LOCK_KEY, LockOptions.defaults(), () -> null))
                     .isInstanceOf(DistributedLockUnavailableException.class);
 
             releaseFirst.countDown();
             holder.get(5, TimeUnit.SECONDS);
-            assertThat(secondLocks.execute(LOCK_KEY, () -> "acquired")).isEqualTo("acquired");
+            assertThat(secondLocks.execute(LOCK_KEY, LockOptions.defaults(), () -> "acquired")).isEqualTo("acquired");
         } finally {
             releaseFirst.countDown();
             executor.shutdownNow();

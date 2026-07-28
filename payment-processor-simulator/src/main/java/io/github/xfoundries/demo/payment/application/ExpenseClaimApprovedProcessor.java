@@ -9,6 +9,7 @@ import io.github.xfoundries.demo.contracts.EventEnvelope;
 import io.github.xfoundries.demo.contracts.ExpenseClaimApprovedV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaidV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaymentFailedV1;
+import org.jfoundry.application.inbox.InboxExecutionResult;
 import org.jfoundry.application.inbox.InboxTemplate;
 import org.jfoundry.application.outbox.OutboxAppendRequest;
 import org.jfoundry.application.outbox.OutboxTemplate;
@@ -41,7 +42,7 @@ public final class ExpenseClaimApprovedProcessor {
     public boolean process(EventEnvelope<ExpenseClaimApprovedV1> approval) throws Exception {
         Objects.requireNonNull(approval);
         return inboxTemplate.executeOnce(
-                approval.eventId(), CONSUMER_NAME, () -> appendPaymentResult(approval));
+                approval.eventId(), CONSUMER_NAME, () -> appendPaymentResult(approval)) == InboxExecutionResult.PROCESSED;
     }
 
     private void appendPaymentResult(EventEnvelope<ExpenseClaimApprovedV1> approval) {

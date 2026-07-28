@@ -25,8 +25,9 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import io.github.xfoundries.demo.expenseapproval.domain.policy.MonthlyExpenseLimitExceeded;
 import io.github.xfoundries.demo.expenseapproval.domain.policy.MonthlyExpenseLimitPolicy;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
+import org.jfoundry.application.lock.DistributedLockClient;
+import org.jfoundry.application.lock.LockExecutor;
 import org.jfoundry.application.lock.LockHandle;
-import org.jfoundry.application.lock.LockTemplate;
 import org.jfoundry.application.outbox.OutboxAppendRequest;
 import org.jfoundry.application.outbox.OutboxTemplate;
 import org.jfoundry.application.transaction.TransactionCallback;
@@ -66,10 +67,11 @@ class FinalApprovalCoordinatorTest {
     void setUp() {
         boundaries = new ArrayList<>();
         transactions = new RecordingTransactionRunner(boundaries);
-        LockTemplate locks = new LockTemplate((name, options) -> {
-            boundaries.add("lock:" + name);
-            return new LockHandle(name, true, () -> boundaries.add("unlock:" + name));
-        });
+        DistributedLockClient client = (key, options) -> {
+            boundaries.add("lock:" + key.value());
+            return new LockHandle(key, true, () -> boundaries.add("unlock:" + key.value()));
+        };
+        LockExecutor locks = LockExecutor.create(client);
         coordinator = new FinalApprovalCoordinator(
                 repository,
                 approvedExpenseAmountReader,
