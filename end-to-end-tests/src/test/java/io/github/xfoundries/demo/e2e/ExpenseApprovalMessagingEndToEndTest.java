@@ -20,8 +20,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import io.github.xfoundries.demo.expenseapproval.boot.ExpenseApprovalApplication;
 import io.github.xfoundries.demo.payment.boot.PaymentProcessorSimulatorApplication;
 import org.junit.jupiter.api.AfterAll;
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+import org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -381,7 +381,7 @@ class ExpenseApprovalMessagingEndToEndTest {
                 Map.entry("jfoundry.outbox.dispatcher.mode", "scheduled"),
                 Map.entry("jfoundry.outbox.dispatcher.interval-ms", "100"),
                 Map.entry("spring.autoconfigure.exclude",
-                        "org.redisson.spring.starter.RedissonAutoConfigurationV2"),
+                        "org.redisson.spring.starter.RedissonAutoConfigurationV4"),
                 Map.entry("spring.jmx.enabled", "false"));
     }
 

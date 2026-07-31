@@ -1,8 +1,7 @@
 package io.github.xfoundries.demo.contracts;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -15,7 +14,7 @@ class EventEnvelopeTest {
 
     private static final Instant OCCURRED_AT = Instant.parse("2026-07-13T08:00:00Z");
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void roundTripsApprovedEventWithVersionedMetadata() throws Exception {
