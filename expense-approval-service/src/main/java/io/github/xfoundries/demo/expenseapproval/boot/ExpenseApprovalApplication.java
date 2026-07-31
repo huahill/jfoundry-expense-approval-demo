@@ -2,7 +2,7 @@ package io.github.xfoundries.demo.expenseapproval.boot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 
 @EntityScan(basePackages = "io.github.xfoundries.demo.expenseapproval.adapter.out")
 @SpringBootApplication(scanBasePackages = "io.github.xfoundries.demo.expenseapproval")

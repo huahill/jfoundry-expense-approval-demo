@@ -3,8 +3,7 @@ package io.github.xfoundries.demo.payment.messaging.approval;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.ObjectMapper;
 import io.github.xfoundries.demo.contracts.EventEnvelope;
 import io.github.xfoundries.demo.contracts.ExpenseClaimApprovedV1;
 import io.github.xfoundries.demo.payment.application.ExpenseClaimApprovedProcessor;
@@ -17,7 +16,7 @@ class ExpenseClaimApprovedKafkaListenerTest {
 
     private static final Instant NOW = Instant.parse("2026-07-13T08:00:00Z");
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final ExpenseClaimApprovedProcessor processor = mock(ExpenseClaimApprovedProcessor.class);
     private final ExpenseClaimApprovedKafkaListener listener =
             new ExpenseClaimApprovedKafkaListener(objectMapper, processor);

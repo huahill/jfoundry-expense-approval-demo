@@ -2,8 +2,7 @@ package io.github.xfoundries.demo.expenseapproval.adapter.in.messaging.payment;
 
 import java.time.Instant;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.ObjectMapper;
 import io.github.xfoundries.demo.contracts.EventEnvelope;
 import io.github.xfoundries.demo.contracts.ReimbursementPaidV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaymentFailedV1;
@@ -18,7 +17,7 @@ class PaymentResultKafkaListenerTest {
 
     private static final Instant NOW = Instant.parse("2026-07-13T08:00:00Z");
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final PaymentResultProjector projector = mock(PaymentResultProjector.class);
     private final PaymentResultKafkaListener listener =
             new PaymentResultKafkaListener(objectMapper, projector);
