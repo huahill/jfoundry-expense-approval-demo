@@ -123,7 +123,7 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    ExpenseClaimQueryUseCase expenseClaimQueryUseCase(ExpenseClaimViewPort viewPort) {
+    ExpenseClaimQueryService expenseClaimQueryUseCase(ExpenseClaimViewPort viewPort) {
         return new ExpenseClaimQueryService(viewPort);
     }
 

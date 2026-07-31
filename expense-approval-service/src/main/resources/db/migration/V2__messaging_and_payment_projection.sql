@@ -4,6 +4,8 @@ create table jfoundry_outbox_event (
     payload_key varchar(255),
     payload_type varchar(500) not null,
     payload_json text not null,
+    traceparent varchar(512),
+    tracestate varchar(512),
     aggregate_type varchar(255),
     aggregate_id varchar(255),
     aggregate_version bigint,
@@ -36,12 +38,15 @@ create table jfoundry_inbox_message (
     processed_at timestamp,
     created_at timestamp not null,
     updated_at timestamp not null,
+    claimed_at timestamp,
+    claim_token varchar(36),
     error_message varchar(2000),
     primary key (id),
     constraint uk_inbox_consumer_message unique (consumer_name, message_id)
 );
 
 create index idx_inbox_processed_at on jfoundry_inbox_message (processed_at);
+create index idx_inbox_claim on jfoundry_inbox_message (status, claimed_at);
 
 create table claim_payment_status (
     claim_id varchar(36) primary key,

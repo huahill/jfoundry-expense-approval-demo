@@ -3,3 +3,5 @@
 /.idea/
 *.iml
 .DS_Store
+docs/superpowers/
+expense-approval-service/graphify-out/

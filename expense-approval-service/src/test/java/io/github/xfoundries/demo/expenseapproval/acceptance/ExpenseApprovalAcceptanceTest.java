@@ -5,14 +5,15 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import io.github.xfoundries.demo.expenseapproval.boot.ExpenseApprovalApplication;
 import io.github.xfoundries.demo.expenseapproval.support.PostgreSqlIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(
         classes = ExpenseApprovalApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 class ExpenseApprovalAcceptanceTest extends PostgreSqlIntegrationTest {
 
     @Autowired TestRestTemplate rest;
@@ -75,7 +77,7 @@ class ExpenseApprovalAcceptanceTest extends PostgreSqlIntegrationTest {
         JsonNode detail = detail(id, user, "EMPLOYEE");
         assertThat(detail.path("state").asText()).isEqualTo("WITHDRAWN");
         assertThat(detail.path("total").decimalValue()).isEqualByComparingTo("120.00");
-        assertThat(detail.path("actions").findValuesAsText("type"))
+        assertThat(detail.path("actions").findValuesAsString("type"))
                 .containsExactly("SUBMITTED", "REJECTED", "REOPENED", "SUBMITTED", "WITHDRAWN");
     }
 
@@ -86,7 +88,7 @@ class ExpenseApprovalAcceptanceTest extends PostgreSqlIntegrationTest {
 
         ResponseEntity<String> selfApproval = post(
                 path(id, "manager-approval"), null, user, "MANAGER");
-        assertStatus(selfApproval, HttpStatus.UNPROCESSABLE_ENTITY);
+        assertStatus(selfApproval, HttpStatus.UNPROCESSABLE_CONTENT);
 
         ResponseEntity<String> skippedFinance = post(
                 path(id, "finance-approval"), null, "finance-invalid", "FINANCE");
