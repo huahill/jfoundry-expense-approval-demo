@@ -32,6 +32,8 @@
         <jfoundry.version>1.0.0-SNAPSHOT</jfoundry.version>
         <spring-boot.version>4.0.7</spring-boot.version>
         <springdoc.version>3.0.3</springdoc.version>
+        <native-build-tools.version>1.1.6</native-build-tools.version>
+        <maven-shared-utils.version>3.4.2</maven-shared-utils.version>
     </properties>
 
     <repositories>
@@ -90,6 +92,19 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <version>${native-build-tools.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.shared</groupId>
+                        <artifactId>maven-shared-utils</artifactId>
+                        <version>${maven-shared-utils.version}</version>
+                    </dependency>
+                </dependencies>
+                <extensions>true</extensions>
             </plugin>
         </plugins>
     </build>

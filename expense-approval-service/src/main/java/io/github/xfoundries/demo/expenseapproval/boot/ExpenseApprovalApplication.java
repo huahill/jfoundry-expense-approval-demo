@@ -1,15 +1,27 @@
 package io.github.xfoundries.demo.expenseapproval.boot;
 
+import io.github.xfoundries.demo.contracts.EventEnvelope;
+import io.github.xfoundries.demo.contracts.ExpenseClaimApprovedV1;
+import io.github.xfoundries.demo.contracts.ReimbursementPaidV1;
+import io.github.xfoundries.demo.contracts.ReimbursementPaymentFailedV1;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@MapperScan("io.github.xfoundries.demo.expenseapproval.infrastructure")
+@MapperScan(
+        basePackages = "io.github.xfoundries.demo.expenseapproval.infrastructure",
+        sqlSessionFactoryRef = "sqlSessionFactory")
 @SpringBootApplication(scanBasePackages = "io.github.xfoundries.demo.expenseapproval")
+@RegisterReflectionForBinding({
+        EventEnvelope.class,
+        ExpenseClaimApprovedV1.class,
+        ReimbursementPaidV1.class,
+        ReimbursementPaymentFailedV1.class
+})
 public class ExpenseApprovalApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ExpenseApprovalApplication.class, args);
     }
 }
-

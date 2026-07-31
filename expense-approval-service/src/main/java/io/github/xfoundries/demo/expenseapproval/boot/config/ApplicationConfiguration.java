@@ -17,7 +17,6 @@ import io.github.xfoundries.demo.expenseapproval.application.claim.command.handl
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.handler.SubmitExpenseClaimCommandHandler;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.handler.UpdateExpenseItemCommandHandler;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.handler.WithdrawExpenseClaimCommandHandler;
-import io.github.xfoundries.demo.expenseapproval.application.claim.query.ExpenseClaimQueries;
 import io.github.xfoundries.demo.expenseapproval.application.claim.query.ExpenseClaimViewReader;
 import io.github.xfoundries.demo.expenseapproval.application.approval.ApprovedExpenseAmountReader;
 import io.github.xfoundries.demo.expenseapproval.application.approval.ExpenseClaimApprovedExternalizer;
@@ -123,7 +122,7 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    ExpenseClaimQueries expenseClaimQueries(ExpenseClaimViewReader viewReader) {
+    ExpenseClaimQueryService expenseClaimQueries(ExpenseClaimViewReader viewReader) {
         return new ExpenseClaimQueryService(viewReader);
     }
 
