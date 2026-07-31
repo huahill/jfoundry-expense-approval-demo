@@ -20,8 +20,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import io.github.xfoundries.demo.expenseapproval.boot.ExpenseApprovalApplication;
 import io.github.xfoundries.demo.payment.boot.PaymentProcessorSimulatorApplication;
 import org.junit.jupiter.api.AfterAll;
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+import org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -43,54 +43,44 @@ import static org.awaitility.Awaitility.await;
 
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ExpenseApprovalMessagingEndToEndTest {
+abstract class AbstractExpenseApprovalMessagingEndToEndTest {
 
     private static final String EMPLOYEE_ID = "employee-payment-success";
 
     @Container
-    static final PostgreSQLContainer<?> EXPENSE_DATABASE =
+    protected static final PostgreSQLContainer<?> EXPENSE_DATABASE =
             new PostgreSQLContainer<>("postgres:17-alpine");
 
     @Container
-    static final PostgreSQLContainer<?> PAYMENT_DATABASE =
+    protected static final PostgreSQLContainer<?> PAYMENT_DATABASE =
             new PostgreSQLContainer<>("postgres:17-alpine");
 
     @Container
-    static final GenericContainer<?> REDIS =
+    protected static final GenericContainer<?> REDIS =
             new GenericContainer<>("redis:8-alpine").withExposedPorts(6379);
 
     @Container
-    static final KafkaContainer KAFKA =
+    protected static final KafkaContainer KAFKA =
             new KafkaContainer("apache/kafka-native:3.9.1");
 
     private final HttpClient http = HttpClient.newHttpClient();
 
-    private ConfigurableApplicationContext paymentContext;
-    private ServletWebServerApplicationContext expenseContext;
-    private ObjectMapper objectMapper;
-    private URI expenseBaseUri;
+    protected ObjectMapper objectMapper;
+    protected URI expenseBaseUri;
 
     @BeforeAll
-    void startApplications() {
-        paymentContext = new SpringApplicationBuilder(PaymentProcessorSimulatorApplication.class)
-                .web(WebApplicationType.NONE)
-                .run(asArguments(paymentProperties()));
-        expenseContext = (ServletWebServerApplicationContext) new SpringApplicationBuilder(
-                ExpenseApprovalApplication.class)
-                .run(asArguments(expenseProperties()));
-        objectMapper = expenseContext.getBean(ObjectMapper.class);
-        expenseBaseUri = URI.create("http://localhost:" + expenseContext.getWebServer().getPort());
+    final void startApplications() throws Exception {
+        startApplicationsForTest();
     }
 
     @AfterAll
-    void stopApplications() {
-        if (expenseContext != null) {
-            expenseContext.close();
-        }
-        if (paymentContext != null) {
-            paymentContext.close();
-        }
+    final void stopApplications() throws Exception {
+        stopApplicationsForTest();
     }
+
+    protected abstract void startApplicationsForTest() throws Exception;
+
+    protected abstract void stopApplicationsForTest() throws Exception;
 
     @Test
     void approvedClaimIsEventuallyProjectedAsPaid() throws Exception {
@@ -186,7 +176,7 @@ class ExpenseApprovalMessagingEndToEndTest {
         assertThat(approvalOutboxCount(overLimitClaim)).isZero();
     }
 
-    private String createAndApproveClaim(String employeeId, BigDecimal amount) throws Exception {
+    protected String createAndApproveClaim(String employeeId, BigDecimal amount) throws Exception {
         String claimId = createReadyForManagerApproval(employeeId, amount);
         assertStatus(send("POST", "/api/claims/" + claimId + "/manager-approval",
                 "manager-1", "MANAGER", null), 204);
@@ -308,7 +298,7 @@ class ExpenseApprovalMessagingEndToEndTest {
                 claimId);
     }
 
-    private static int approvalOutboxCount(String claimId) throws Exception {
+    protected static int approvalOutboxCount(String claimId) throws Exception {
         return queryInt(
                 EXPENSE_DATABASE,
                 "select count(*) from jfoundry_outbox_event "
@@ -365,7 +355,7 @@ class ExpenseApprovalMessagingEndToEndTest {
                 .until(condition::matches);
     }
 
-    private static Map<String, Object> paymentProperties() {
+    protected static Map<String, Object> paymentProperties() {
         return Map.ofEntries(
                 Map.entry("spring.application.name", "payment-processor-simulator"),
                 Map.entry("spring.datasource.url", PAYMENT_DATABASE.getJdbcUrl()),
@@ -381,11 +371,11 @@ class ExpenseApprovalMessagingEndToEndTest {
                 Map.entry("jfoundry.outbox.dispatcher.mode", "scheduled"),
                 Map.entry("jfoundry.outbox.dispatcher.interval-ms", "100"),
                 Map.entry("spring.autoconfigure.exclude",
-                        "org.redisson.spring.starter.RedissonAutoConfigurationV2"),
+                        "org.redisson.spring.starter.RedissonAutoConfigurationV4"),
                 Map.entry("spring.jmx.enabled", "false"));
     }
 
-    private static Map<String, Object> expenseProperties() {
+    protected static Map<String, Object> expenseProperties() {
         return Map.ofEntries(
                 Map.entry("spring.application.name", "expense-approval-service"),
                 Map.entry("server.port", "0"),
@@ -404,13 +394,13 @@ class ExpenseApprovalMessagingEndToEndTest {
                 Map.entry("spring.jmx.enabled", "false"));
     }
 
-    private static String[] asArguments(Map<String, Object> properties) {
+    protected static String[] asArguments(Map<String, Object> properties) {
         return properties.entrySet().stream()
                 .map(entry -> "--" + entry.getKey() + '=' + entry.getValue())
                 .toArray(String[]::new);
     }
 
-    private static String moduleMigrationLocation(String module) {
+    protected static String moduleMigrationLocation(String module) {
         Path moduleRoot = Path.of(System.getProperty("user.dir"), "..", module)
                 .toAbsolutePath()
                 .normalize();
@@ -420,5 +410,33 @@ class ExpenseApprovalMessagingEndToEndTest {
     @FunctionalInterface
     private interface CheckedCondition {
         boolean matches() throws Exception;
+    }
+}
+
+class ExpenseApprovalMessagingEndToEndTest extends AbstractExpenseApprovalMessagingEndToEndTest {
+
+    private ConfigurableApplicationContext paymentContext;
+    private ServletWebServerApplicationContext expenseContext;
+
+    @Override
+    protected void startApplicationsForTest() {
+        paymentContext = new SpringApplicationBuilder(PaymentProcessorSimulatorApplication.class)
+                .web(WebApplicationType.NONE)
+                .run(asArguments(paymentProperties()));
+        expenseContext = (ServletWebServerApplicationContext) new SpringApplicationBuilder(
+                ExpenseApprovalApplication.class)
+                .run(asArguments(expenseProperties()));
+        objectMapper = expenseContext.getBean(ObjectMapper.class);
+        expenseBaseUri = URI.create("http://localhost:" + expenseContext.getWebServer().getPort());
+    }
+
+    @Override
+    protected void stopApplicationsForTest() {
+        if (expenseContext != null) {
+            expenseContext.close();
+        }
+        if (paymentContext != null) {
+            paymentContext.close();
+        }
     }
 }
