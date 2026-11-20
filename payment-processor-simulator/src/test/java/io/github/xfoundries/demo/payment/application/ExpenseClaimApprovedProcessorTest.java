@@ -9,14 +9,14 @@ import io.github.xfoundries.demo.contracts.EventEnvelope;
 import io.github.xfoundries.demo.contracts.ExpenseClaimApprovedV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaidV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaymentFailedV1;
-import org.jfoundry.application.inbox.InboxClaim;
-import org.jfoundry.application.inbox.InboxMessageStore;
-import org.jfoundry.application.inbox.InboxTemplate;
-import org.jfoundry.application.outbox.OutboxAppendRequest;
-import org.jfoundry.application.outbox.OutboxTemplate;
-import org.jfoundry.application.transaction.TransactionCallback;
-import org.jfoundry.application.transaction.TransactionOptions;
-import org.jfoundry.application.transaction.TransactionRunner;
+import io.huahill.jfoundry.application.inbox.InboxClaim;
+import io.huahill.jfoundry.application.inbox.InboxMessageStore;
+import io.huahill.jfoundry.application.inbox.InboxTemplate;
+import io.huahill.jfoundry.application.outbox.OutboxAppendRequest;
+import io.huahill.jfoundry.application.outbox.OutboxTemplate;
+import io.huahill.jfoundry.application.transaction.TransactionCallback;
+import io.huahill.jfoundry.application.transaction.TransactionOptions;
+import io.huahill.jfoundry.application.transaction.TransactionRunner;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -34,7 +34,7 @@ class ExpenseClaimApprovedProcessorTest {
     private final OutboxTemplate outboxTemplate = mock(OutboxTemplate.class);
     private final TransactionRunner transactions = new TransactionRunner() {
         @Override
-        public <T> T call(TransactionOptions options, TransactionCallback<T> callback) throws Exception {
+        public <T> T call(TransactionOptions options, TransactionCallback<T> callback) {
             return callback.execute();
         }
     };

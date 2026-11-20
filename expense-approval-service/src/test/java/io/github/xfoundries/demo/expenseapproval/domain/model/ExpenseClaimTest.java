@@ -5,8 +5,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 
-import org.jfoundry.domain.exception.DomainRuleViolationException;
-import org.jfoundry.domain.exception.DomainStateException;
+import io.huahill.jfoundry.domain.exception.DomainRuleViolationException;
+import io.huahill.jfoundry.domain.exception.DomainStateException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

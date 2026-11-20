@@ -19,51 +19,59 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
-            <artifactId>jfoundry-application-starter</artifactId>
+            <groupId>io.github.huahill</groupId>
+            <artifactId>jfoundry-application-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
-            <artifactId>jfoundry-persistence-mybatis-plus-starter</artifactId>
+            <groupId>io.github.huahill</groupId>
+            <artifactId>jfoundry-domain</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
+            <groupId>io.github.huahill</groupId>
+            <artifactId>jfoundry-hexagonal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.huahill</groupId>
+            <artifactId>jfoundry-cqrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.huahill</groupId>
             <artifactId>jfoundry-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
+            <groupId>io.github.huahill</groupId>
             <artifactId>jfoundry-webmvc-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
+            <groupId>io.github.huahill</groupId>
             <artifactId>jfoundry-persistence-mybatis-plus-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
+            <groupId>io.github.huahill</groupId>
             <artifactId>jfoundry-lock-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
+            <groupId>io.github.huahill</groupId>
             <artifactId>jfoundry-lock-redisson-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
-            <artifactId>jfoundry-outbox-spring-boot-starter</artifactId>
+            <groupId>io.github.huahill</groupId>
+            <artifactId>jfoundry-domain-event-outbox-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
+            <groupId>io.github.huahill</groupId>
             <artifactId>jfoundry-outbox-mybatis-plus-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
+            <groupId>io.github.huahill</groupId>
             <artifactId>jfoundry-inbox-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
+            <groupId>io.github.huahill</groupId>
             <artifactId>jfoundry-inbox-mybatis-plus-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
+            <groupId>io.github.huahill</groupId>
             <artifactId>jfoundry-messaging-kafka-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
@@ -85,7 +93,7 @@
             <version>${springdoc.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.xfoundries</groupId>
+            <groupId>io.github.huahill</groupId>
             <artifactId>jfoundry-architecture-test</artifactId>
             <scope>test</scope>
         </dependency>
@@ -111,12 +119,12 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
+            <artifactId>testcontainers-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

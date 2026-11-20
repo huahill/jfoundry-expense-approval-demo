@@ -2,7 +2,7 @@ package io.github.xfoundries.demo.expenseapproval.application.claim.command.port
 
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.CreateExpenseClaimCommand;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
-import org.jfoundry.architecture.hexagonal.PrimaryPort;
+import io.huahill.jfoundry.architecture.hexagonal.PrimaryPort;
 
 @PrimaryPort
 public interface CreateExpenseClaimUseCase {

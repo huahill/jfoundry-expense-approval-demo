@@ -28,8 +28,8 @@ import io.github.xfoundries.demo.expenseapproval.adapter.out.persistence.claim.E
 import io.github.xfoundries.demo.expenseapproval.adapter.out.persistence.claim.ExpenseClaimMapper;
 import io.github.xfoundries.demo.expenseapproval.adapter.out.persistence.claim.ExpenseItemData;
 import io.github.xfoundries.demo.expenseapproval.adapter.out.persistence.claim.ExpenseItemMapper;
-import org.jfoundry.architecture.hexagonal.SecondaryAdapter;
-import org.jfoundry.infrastructure.persistence.AbstractPersistenceAdapter;
+import io.huahill.jfoundry.architecture.hexagonal.SecondaryAdapter;
+import io.huahill.jfoundry.infrastructure.persistence.AbstractPersistenceAdapter;
 import org.springframework.stereotype.Repository;
 
 @SecondaryAdapter

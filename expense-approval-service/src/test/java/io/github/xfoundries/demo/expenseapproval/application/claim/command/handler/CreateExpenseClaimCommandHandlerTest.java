@@ -13,11 +13,11 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaim;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
-import org.jfoundry.application.transaction.TransactionCallback;
-import org.jfoundry.application.transaction.TransactionOptions;
-import org.jfoundry.application.transaction.TransactionRunner;
-import org.jfoundry.architecture.cqrs.Command;
-import org.jfoundry.architecture.cqrs.CommandHandler;
+import io.huahill.jfoundry.application.transaction.TransactionCallback;
+import io.huahill.jfoundry.application.transaction.TransactionOptions;
+import io.huahill.jfoundry.application.transaction.TransactionRunner;
+import io.huahill.jfoundry.architecture.cqrs.Command;
+import io.huahill.jfoundry.architecture.cqrs.CommandHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -65,7 +65,7 @@ class CreateExpenseClaimCommandHandlerTest {
         private int calls;
 
         @Override
-        public <T> T call(TransactionOptions options, TransactionCallback<T> callback) throws Exception {
+        public <T> T call(TransactionOptions options, TransactionCallback<T> callback) {
             calls++;
             return callback.execute();
         }

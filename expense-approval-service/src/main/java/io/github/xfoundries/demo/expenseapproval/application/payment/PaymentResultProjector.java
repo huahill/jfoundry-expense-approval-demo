@@ -1,5 +1,6 @@
 package io.github.xfoundries.demo.expenseapproval.application.payment;
 
+import io.huahill.jfoundry.application.ApplicationService;
 import java.util.Objects;
 
 import io.github.xfoundries.demo.contracts.EventEnvelope;
@@ -7,9 +8,10 @@ import io.github.xfoundries.demo.contracts.ReimbursementPaidV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaymentFailedV1;
 import io.github.xfoundries.demo.expenseapproval.application.payment.port.out.PaymentStatusProjectionPort;
 import io.github.xfoundries.demo.expenseapproval.application.payment.port.out.PaymentStatusProjectionPort.PaymentStatusProjection;
-import org.jfoundry.application.inbox.InboxExecutionResult;
-import org.jfoundry.application.inbox.InboxTemplate;
+import io.huahill.jfoundry.application.inbox.InboxExecutionResult;
+import io.huahill.jfoundry.application.inbox.InboxTemplate;
 
+@ApplicationService
 public class PaymentResultProjector {
 
     public static final String CONSUMER_NAME = "expense-approval.payment-result-projector.v1";

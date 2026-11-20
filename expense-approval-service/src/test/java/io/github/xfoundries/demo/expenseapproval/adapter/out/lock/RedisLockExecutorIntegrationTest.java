@@ -9,11 +9,11 @@ import java.util.concurrent.TimeUnit;
 
 import io.github.xfoundries.demo.expenseapproval.boot.ExpenseApprovalApplication;
 import io.github.xfoundries.demo.expenseapproval.support.PostgreSqlIntegrationTest;
-import org.jfoundry.application.lock.DistributedLockUnavailableException;
-import org.jfoundry.application.lock.LockExecutor;
-import org.jfoundry.application.lock.LockKey;
-import org.jfoundry.application.lock.LockOptions;
-import org.jfoundry.infrastructure.lock.redisson.RedissonDistributedLockClient;
+import io.huahill.jfoundry.application.lock.DistributedLockUnavailableException;
+import io.huahill.jfoundry.application.lock.LockExecutor;
+import io.huahill.jfoundry.application.lock.LockKey;
+import io.huahill.jfoundry.application.lock.LockOptions;
+import io.huahill.jfoundry.infrastructure.lock.redisson.RedissonDistributedLockClient;
 import org.junit.jupiter.api.Test;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;

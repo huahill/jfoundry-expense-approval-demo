@@ -26,9 +26,9 @@ import io.github.xfoundries.demo.expenseapproval.application.payment.port.out.Pa
 import io.github.xfoundries.demo.expenseapproval.application.claim.query.ExpenseClaimQueryService;
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
-import org.jfoundry.application.lock.LockExecutor;
-import org.jfoundry.application.inbox.InboxTemplate;
-import org.jfoundry.application.transaction.TransactionRunner;
+import io.huahill.jfoundry.application.lock.LockExecutor;
+import io.huahill.jfoundry.application.inbox.InboxTemplate;
+import io.huahill.jfoundry.application.transaction.TransactionRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

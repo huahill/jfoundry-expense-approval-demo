@@ -1,6 +1,6 @@
 package io.github.xfoundries.demo.expenseapproval.domain.model;
 
-import org.jfoundry.domain.exception.DomainRuleViolationException;
+import io.huahill.jfoundry.domain.exception.DomainRuleViolationException;
 import org.jmolecules.ddd.types.ValueObject;
 
 public record RejectionReason(String value) implements ValueObject {

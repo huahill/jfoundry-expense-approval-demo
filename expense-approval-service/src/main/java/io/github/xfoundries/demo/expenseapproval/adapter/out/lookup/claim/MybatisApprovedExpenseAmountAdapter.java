@@ -6,8 +6,8 @@ import io.github.xfoundries.demo.expenseapproval.adapter.out.persistence.claim.E
 import io.github.xfoundries.demo.expenseapproval.application.approval.port.out.ApprovedExpenseAmountPort;
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
-import org.jfoundry.architecture.hexagonal.SecondaryAdapter;
-import org.jfoundry.infrastructure.persistence.AbstractPersistenceAdapter;
+import io.huahill.jfoundry.architecture.hexagonal.SecondaryAdapter;
+import io.huahill.jfoundry.infrastructure.persistence.AbstractPersistenceAdapter;
 import org.springframework.stereotype.Repository;
 
 @SecondaryAdapter

@@ -6,8 +6,8 @@ import com.tngtech.archunit.junit.ArchTests;
 import com.tngtech.archunit.lang.ArchRule;
 import io.github.xfoundries.demo.expenseapproval.application.payment.port.out.PaymentStatusProjectionPort;
 import io.github.xfoundries.demo.expenseapproval.application.approval.port.out.ApprovedExpenseAmountPort;
-import org.jfoundry.test.archunit.HexagonalAdapterPackageConvention;
-import org.jfoundry.test.archunit.JFoundryRules;
+import io.huahill.jfoundry.test.archunit.HexagonalAdapterPackageConvention;
+import io.huahill.jfoundry.test.archunit.JFoundryRules;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
