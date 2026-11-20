@@ -5,10 +5,10 @@ import java.time.Instant;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
-import org.jfoundry.infrastructure.persistence.AggregateData;
+import io.huahill.jfoundry.infrastructure.persistence.mybatis.MybatisPlusAggregateData;
 
 @TableName("expense_claim")
-public class ExpenseClaimData extends AggregateData<String> {
+public class ExpenseClaimData extends MybatisPlusAggregateData<String> {
 
     private String claimantId;
     private String title;

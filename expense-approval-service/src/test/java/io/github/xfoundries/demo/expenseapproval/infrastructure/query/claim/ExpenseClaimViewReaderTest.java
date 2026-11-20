@@ -27,7 +27,10 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
 import io.github.xfoundries.demo.expenseapproval.support.PostgreSqlIntegrationTest;
 import org.junit.jupiter.api.Test;
+import io.github.xfoundries.demo.expenseapproval.support.ApplicationBoundaryTestConfiguration;
+import io.github.xfoundries.demo.expenseapproval.support.TestApplicationBoundary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = ExpenseApprovalApplication.class)
+@Import(ApplicationBoundaryTestConfiguration.class)
 @Transactional
 class ExpenseClaimViewReaderTest extends PostgreSqlIntegrationTest {
 
@@ -44,14 +48,15 @@ class ExpenseClaimViewReaderTest extends PostgreSqlIntegrationTest {
     private static final UserId MANAGER = UserId.of("manager-1");
 
     @Autowired ExpenseClaimRepository repository;
+    @Autowired TestApplicationBoundary boundary;
     @Autowired ExpenseClaimViewReader viewReader;
     @Autowired JdbcTemplate jdbcTemplate;
 
     @Test
     void ownedClaimsCanBeFilteredAndPaged() {
-        repository.add(draft("claim-1", EMPLOYEE_1, "Draft"));
-        repository.add(submitted("claim-2", EMPLOYEE_1, "Small", "100.00"));
-        repository.add(submitted("claim-3", EMPLOYEE_2, "Other owner", "100.00"));
+        boundary.run(() -> repository.add(draft("claim-1", EMPLOYEE_1, "Draft")));
+        boundary.run(() -> repository.add(submitted("claim-2", EMPLOYEE_1, "Small", "100.00")));
+        boundary.run(() -> repository.add(submitted("claim-3", EMPLOYEE_2, "Other owner", "100.00")));
 
         PageResult<ClaimSummary> page = viewReader.findOwned(
                 EMPLOYEE_1, ClaimState.PENDING_MANAGER, new PageQuery(0, 1));
@@ -65,8 +70,8 @@ class ExpenseClaimViewReaderTest extends PostgreSqlIntegrationTest {
         ExpenseClaim managerPending = submitted("claim-manager", EMPLOYEE_1, "Small", "100.00");
         ExpenseClaim financePending = submitted("claim-finance", EMPLOYEE_2, "Large", "2000.01");
         financePending.approveByManager(MANAGER, NOW.plusSeconds(3));
-        repository.add(managerPending);
-        repository.add(financePending);
+        boundary.run(() -> repository.add(managerPending));
+        boundary.run(() -> repository.add(financePending));
 
         assertThat(viewReader.findPendingManager(new PageQuery(0, 20)).items())
                 .extracting(ClaimSummary::id).containsExactly("claim-manager");
@@ -78,7 +83,7 @@ class ExpenseClaimViewReaderTest extends PostgreSqlIntegrationTest {
     void detailContainsItemsAndOrderedActionHistory() {
         ExpenseClaim claim = submitted("claim-detail", EMPLOYEE_1, "Large", "2000.01");
         claim.approveByManager(MANAGER, NOW.plusSeconds(3));
-        repository.add(claim);
+        boundary.run(() -> repository.add(claim));
 
         ClaimDetail detail = viewReader.findDetail(claim.id()).orElseThrow();
 
@@ -94,10 +99,10 @@ class ExpenseClaimViewReaderTest extends PostgreSqlIntegrationTest {
         ExpenseClaim pending = approved("claim-pending", "100.00");
         ExpenseClaim paid = approved("claim-paid", "200.00");
         ExpenseClaim failed = approved("claim-failed", "300.00");
-        repository.add(draft);
-        repository.add(pending);
-        repository.add(paid);
-        repository.add(failed);
+        boundary.run(() -> repository.add(draft));
+        boundary.run(() -> repository.add(pending));
+        boundary.run(() -> repository.add(paid));
+        boundary.run(() -> repository.add(failed));
         insertPayment("claim-paid", "PAID", "payment-1", null, null, "paid-event");
         insertPayment("claim-failed", "FAILED", null, "LIMIT", "Payment limit exceeded", "failed-event");
 

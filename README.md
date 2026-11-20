@@ -4,7 +4,7 @@ English | [中文](README_ZH.md)
 
 > **Current branch:** this README and the checked-out `onion-architecture` branch describe the
 > Onion Simple Architecture implementation. The Hexagonal implementation is maintained separately
-> on [`hexagonal/mybatis-plus`](https://github.com/xfoundries/jfoundry-expense-approval-demo/tree/hexagonal/mybatis-plus).
+> on [`hexagonal/mybatis-plus`](https://github.com/huahill/jfoundry-expense-approval-demo/tree/hexagonal/mybatis-plus).
 
 This is a business-light demo with a complete architecture path. It validates whether an AI agent
 can use the `domain-architecture` plugin and optional jfoundry support to move from complete
@@ -15,7 +15,7 @@ verify that DDD, Onion Simple Architecture, CQRS, Outbox, Inbox, Kafka, distribu
 persistence can be combined correctly. The separate `hexagonal/mybatis-plus` branch reuses the same business and
 acceptance baseline to validate Hexagonal Architecture without changing this branch's architecture.
 
-This project explicitly selects a local jfoundry build to validate the plugin's `using-jfoundry`
+This project explicitly uses jfoundry to validate the plugin's `using-jfoundry`
 landing phase. **jfoundry is not required by the `domain-architecture` plugin.** Projects that do
 not use jfoundry can still use the domain modeling and architecture guidance capabilities
 independently.
@@ -25,7 +25,7 @@ independently.
 | Branch | Architecture style | Status in this README |
 |--------|--------------------|-----------------------|
 | `onion/mybatis-plus` | Onion Simple Architecture | Current implementation; package structure and dependency descriptions below refer to this branch. |
-| [`hexagonal/mybatis-plus`](https://github.com/xfoundries/jfoundry-expense-approval-demo/tree/main) | Hexagonal Architecture | Separately maintained default-branch variant with its own README and architecture vocabulary. |
+| [`hexagonal/mybatis-plus`](https://github.com/huahill/jfoundry-expense-approval-demo/tree/main) | Hexagonal Architecture | Separately maintained default-branch variant with its own README and architecture vocabulary. |
 
 Unless a section explicitly says "cross-variant" or names `main`, ring, package, naming, and
 dependency descriptions in this README refer to the current Onion Simple branch.
@@ -46,7 +46,7 @@ unconditionally start the complete container topology.
 
 ## Architecture and Technology (`onion-architecture`: Onion Simple)
 
-- Java 25, Maven, Spring Boot 3.5.16, jfoundry 1.0.0-SNAPSHOT
+- Java 25, Maven, Spring Boot 4.1.2, jfoundry 1.8.0-SNAPSHOT
 - MyBatis-Plus, PostgreSQL 17, Flyway
 - Kafka, Redis/Redisson, Testcontainers
 - JUnit 5, ArchUnit, Awaitility
@@ -114,11 +114,13 @@ not exceed `8,000.00 CNY`; larger payments return a deterministic failure result
 ## Prerequisites
 
 - JDK 25
-- Maven 3.9+
+- Maven 3.9+; Maven 4.0.0-rc-7 is verified
 - Docker; container tests start two PostgreSQL instances, Kafka, and Redis
-- Local jfoundry source at `/Users/huangxiao/Workspace/mine/jfoundry`
 
-Install the current local jfoundry build before the first build:
+The demo consumes `io.github.huahill:jfoundry-*` at `1.8.0-SNAPSHOT`. The root POM resolves that
+snapshot from Sonatype Central Snapshots, so a local jfoundry installation is not required.
+
+To exercise an unpublished jfoundry checkout instead, install that checkout before building the demo:
 
 ```bash
 cd /Users/huangxiao/Workspace/mine/jfoundry

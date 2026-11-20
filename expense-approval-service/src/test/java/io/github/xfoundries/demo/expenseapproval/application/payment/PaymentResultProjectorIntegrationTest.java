@@ -8,7 +8,7 @@ import io.github.xfoundries.demo.contracts.ReimbursementPaidV1;
 import io.github.xfoundries.demo.expenseapproval.application.payment.PaymentStatusProjectionStore;
 import io.github.xfoundries.demo.expenseapproval.boot.ExpenseApprovalApplication;
 import io.github.xfoundries.demo.expenseapproval.support.PostgreSqlIntegrationTest;
-import org.jfoundry.application.inbox.InboxTemplate;
+import io.huahill.jfoundry.application.inbox.InboxTemplate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

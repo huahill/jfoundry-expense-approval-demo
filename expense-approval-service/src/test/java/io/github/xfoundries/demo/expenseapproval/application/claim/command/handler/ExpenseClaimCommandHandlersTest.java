@@ -27,10 +27,10 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseItemId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
-import org.jfoundry.application.exception.InvalidArgumentException;
-import org.jfoundry.application.transaction.TransactionCallback;
-import org.jfoundry.application.transaction.TransactionOptions;
-import org.jfoundry.application.transaction.TransactionRunner;
+import io.huahill.jfoundry.application.exception.InvalidArgumentException;
+import io.huahill.jfoundry.application.transaction.TransactionCallback;
+import io.huahill.jfoundry.application.transaction.TransactionOptions;
+import io.huahill.jfoundry.application.transaction.TransactionRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,7 +61,7 @@ class ExpenseClaimCommandHandlersTest {
 
     private final TransactionRunner transactions = new TransactionRunner() {
         @Override
-        public <T> T call(TransactionOptions options, TransactionCallback<T> callback) throws Exception {
+        public <T> T call(TransactionOptions options, TransactionCallback<T> callback) {
             return callback.execute();
         }
     };

@@ -40,7 +40,7 @@ class ExpenseApprovalAcceptanceTest extends PostgreSqlIntegrationTest {
                 HttpStatus.NO_CONTENT);
 
         JsonNode detail = detail(id, "employee-small", "EMPLOYEE");
-        assertThat(detail.path("state").asText()).isEqualTo("APPROVED");
+        assertThat(detail.path("state").asString()).isEqualTo("APPROVED");
         assertThat(detail.path("actions")).hasSize(2);
     }
 
@@ -50,12 +50,12 @@ class ExpenseApprovalAcceptanceTest extends PostgreSqlIntegrationTest {
 
         assertStatus(post(path(id, "manager-approval"), null, "manager-high", "MANAGER"),
                 HttpStatus.NO_CONTENT);
-        assertThat(detail(id, "finance-high", "FINANCE").path("state").asText())
+        assertThat(detail(id, "finance-high", "FINANCE").path("state").asString())
                 .isEqualTo("PENDING_FINANCE");
 
         assertStatus(post(path(id, "finance-approval"), null, "finance-high", "FINANCE"),
                 HttpStatus.NO_CONTENT);
-        assertThat(detail(id, "employee-high", "EMPLOYEE").path("state").asText())
+        assertThat(detail(id, "employee-high", "EMPLOYEE").path("state").asString())
                 .isEqualTo("APPROVED");
     }
 
@@ -67,7 +67,7 @@ class ExpenseApprovalAcceptanceTest extends PostgreSqlIntegrationTest {
                 "manager-reopen", "MANAGER"), HttpStatus.NO_CONTENT);
         assertStatus(post(path(id, "reopen"), null, user, "EMPLOYEE"), HttpStatus.NO_CONTENT);
 
-        String itemId = detail(id, user, "EMPLOYEE").path("items").get(0).path("id").asText();
+        String itemId = detail(id, user, "EMPLOYEE").path("items").get(0).path("id").asString();
         Map<String, Object> update = item("120.00");
         assertStatus(exchange(path(id, "items/" + itemId), HttpMethod.PUT, update, user, "EMPLOYEE"),
                 HttpStatus.NO_CONTENT);
@@ -75,7 +75,7 @@ class ExpenseApprovalAcceptanceTest extends PostgreSqlIntegrationTest {
         assertStatus(post(path(id, "withdraw"), null, user, "EMPLOYEE"), HttpStatus.NO_CONTENT);
 
         JsonNode detail = detail(id, user, "EMPLOYEE");
-        assertThat(detail.path("state").asText()).isEqualTo("WITHDRAWN");
+        assertThat(detail.path("state").asString()).isEqualTo("WITHDRAWN");
         assertThat(detail.path("total").decimalValue()).isEqualByComparingTo("120.00");
         assertThat(detail.path("actions").findValuesAsString("type"))
                 .containsExactly("SUBMITTED", "REJECTED", "REOPENED", "SUBMITTED", "WITHDRAWN");

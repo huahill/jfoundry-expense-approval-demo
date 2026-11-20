@@ -1,6 +1,6 @@
 package io.github.xfoundries.demo.expenseapproval.domain.policy;
 
-import org.jfoundry.domain.exception.DomainRuleViolationException;
+import io.huahill.jfoundry.domain.exception.DomainRuleViolationException;
 
 public final class MonthlyExpenseLimitExceeded extends DomainRuleViolationException {
 

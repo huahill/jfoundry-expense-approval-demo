@@ -6,8 +6,8 @@ import com.tngtech.archunit.junit.ArchTests;
 import com.tngtech.archunit.lang.ArchRule;
 import io.github.xfoundries.demo.expenseapproval.application.approval.ApprovedExpenseAmountReader;
 import io.github.xfoundries.demo.expenseapproval.application.payment.PaymentStatusProjectionStore;
-import org.jfoundry.architecture.hexagonal.PrimaryPort;
-import org.jfoundry.test.archunit.JFoundryRules;
+import io.huahill.jfoundry.architecture.hexagonal.PrimaryPort;
+import io.huahill.jfoundry.test.archunit.JFoundryRules;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
