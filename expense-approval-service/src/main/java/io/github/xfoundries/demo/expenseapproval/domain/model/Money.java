@@ -3,7 +3,7 @@ package io.github.xfoundries.demo.expenseapproval.domain.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import org.jfoundry.domain.exception.DomainRuleViolationException;
+import io.huahill.jfoundry.domain.exception.DomainRuleViolationException;
 import org.jmolecules.ddd.types.ValueObject;
 
 public record Money(BigDecimal amount) implements Comparable<Money>, ValueObject {

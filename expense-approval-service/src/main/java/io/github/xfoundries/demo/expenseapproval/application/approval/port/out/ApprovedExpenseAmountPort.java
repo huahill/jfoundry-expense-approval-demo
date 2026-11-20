@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
-import org.jfoundry.architecture.hexagonal.SecondaryPort;
+import io.huahill.jfoundry.architecture.hexagonal.SecondaryPort;
 
 @SecondaryPort
 public interface ApprovedExpenseAmountPort {

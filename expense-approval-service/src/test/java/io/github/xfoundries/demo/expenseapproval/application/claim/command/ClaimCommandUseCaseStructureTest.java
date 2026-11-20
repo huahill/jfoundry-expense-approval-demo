@@ -14,8 +14,8 @@ import io.github.xfoundries.demo.expenseapproval.application.claim.command.handl
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.handler.SubmitExpenseClaimCommandHandler;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.handler.UpdateExpenseItemCommandHandler;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.handler.WithdrawExpenseClaimCommandHandler;
-import org.jfoundry.architecture.cqrs.CommandHandler;
-import org.jfoundry.architecture.hexagonal.PrimaryPort;
+import io.huahill.jfoundry.architecture.cqrs.CommandHandler;
+import io.huahill.jfoundry.architecture.hexagonal.PrimaryPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;

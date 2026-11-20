@@ -12,8 +12,8 @@ import io.github.xfoundries.demo.expenseapproval.application.claim.command.Reope
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.SubmitExpenseClaimCommand;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.UpdateExpenseItemCommand;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.WithdrawExpenseClaimCommand;
-import org.jfoundry.architecture.cqrs.Command;
-import org.jfoundry.architecture.cqrs.CommandHandler;
+import io.huahill.jfoundry.architecture.cqrs.Command;
+import io.huahill.jfoundry.architecture.cqrs.CommandHandler;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 

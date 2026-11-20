@@ -4,10 +4,10 @@ English | [中文](README_ZH.md)
 
 > **Current branch:** this README and the checked-out `main` branch describe the Hexagonal
 > Architecture implementation. The Onion Simple implementation is maintained separately on
-> [`onion/mybatis-plus`](https://github.com/xfoundries/jfoundry-expense-approval-demo/tree/onion/mybatis-plus).
+> [`onion/mybatis-plus`](https://github.com/huahill/jfoundry-expense-approval-demo/tree/onion/mybatis-plus).
 
 This is a business-light demo with a complete architecture path. It validates whether an AI agent
-can use the [domain-architecture-skills](https://github.com/xfoundries/domain-architecture-skills) plugin and optional [jfoundry](https://github.com/xfoundries/jfoundry) support to move from complete
+can use the [domain-architecture-skills](https://github.com/huahill/domain-architecture-skills) plugin and optional [jfoundry](https://github.com/huahill/jfoundry) support to move from complete
 requirements through domain modeling, architecture decisions, implementation, and automated
 acceptance. The project deliberately avoids expanding organization structures, approval matrices,
 and other complex business concerns. On the current `main` branch, its focus is to verify that DDD,
@@ -15,17 +15,16 @@ Hexagonal Architecture, CQRS, Outbox, Inbox, Kafka, distributed locking, and per
 combined correctly. The separate Onion branch reuses the same business and acceptance baseline to
 validate Onion Simple without changing the architecture of `main`.
 
-This project explicitly selects a local jfoundry build to validate the plugin's `using-jfoundry`
-landing phase. **jfoundry is not required by the `domain-architecture` plugin.** Projects that do
-not use jfoundry can still use the domain modeling and architecture guidance capabilities
-independently.
+This project explicitly uses jfoundry to validate the plugin's `using-jfoundry` landing phase.
+**jfoundry is not required by the `domain-architecture` plugin.** Projects that do not use
+jfoundry can still use the domain modeling and architecture guidance capabilities independently.
 
 ## Architecture Variants
 
 | Branch | Architecture style | Status in this README |
 |--------|--------------------|-----------------------|
 | `hexagonal/mybatis-plus` | Hexagonal Architecture | Current implementation on the repository's default branch; package structure and runtime descriptions below refer to this branch. |
-| [`onion/mybatis-plus`](https://github.com/xfoundries/jfoundry-expense-approval-demo/tree/onion/mybatis-plus) | Onion Simple Architecture | Separately maintained validation variant with its own README and architecture vocabulary. |
+| [`onion/mybatis-plus`](https://github.com/huahill/jfoundry-expense-approval-demo/tree/onion/mybatis-plus) | Onion Simple Architecture | Separately maintained validation variant with its own README and architecture vocabulary. |
 
 Unless a section explicitly says "cross-variant" or names the Onion branch, `application`, Port,
 Adapter, package, and dependency descriptions in this README refer to the current Hexagonal
@@ -47,7 +46,7 @@ unconditionally start the complete container topology.
 
 ## Architecture and Technology (`main`: Hexagonal)
 
-- Java 25, Maven, Spring Boot 3.5.16, jfoundry 1.0.0-SNAPSHOT
+- Java 25, Maven, Spring Boot 4.1.2, jfoundry 1.8.0-SNAPSHOT
 - MyBatis-Plus, PostgreSQL 17, Flyway
 - Kafka, Redis/Redisson, Testcontainers
 - JUnit 5, ArchUnit, Awaitility
@@ -120,11 +119,13 @@ not exceed `8,000.00 CNY`; larger payments return a deterministic failure result
 ## Prerequisites
 
 - JDK 25
-- Maven 3.9+
+- Maven 3.9+; Maven 4.0.0-rc-7 is verified
 - Docker; container tests start two PostgreSQL instances, Kafka, and Redis
-- Local jfoundry source at `/Users/huangxiao/Workspace/mine/jfoundry`
 
-Install the current local jfoundry build before the first build:
+The demo consumes `io.github.huahill:jfoundry-*` at `1.8.0-SNAPSHOT`. The root POM resolves that
+snapshot from Sonatype Central Snapshots, so a local jfoundry installation is not required.
+
+To exercise an unpublished jfoundry checkout instead, install that checkout before building the demo:
 
 ```bash
 cd /Users/huangxiao/Workspace/mine/jfoundry

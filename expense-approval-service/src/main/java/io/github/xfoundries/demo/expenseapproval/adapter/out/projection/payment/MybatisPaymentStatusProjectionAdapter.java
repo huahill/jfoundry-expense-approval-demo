@@ -1,8 +1,8 @@
 package io.github.xfoundries.demo.expenseapproval.adapter.out.projection.payment;
 
 import io.github.xfoundries.demo.expenseapproval.application.payment.port.out.PaymentStatusProjectionPort;
-import org.jfoundry.architecture.hexagonal.SecondaryAdapter;
-import org.jfoundry.infrastructure.persistence.AbstractPersistenceAdapter;
+import io.huahill.jfoundry.architecture.hexagonal.SecondaryAdapter;
+import io.huahill.jfoundry.infrastructure.persistence.AbstractPersistenceAdapter;
 import org.springframework.stereotype.Repository;
 
 @SecondaryAdapter

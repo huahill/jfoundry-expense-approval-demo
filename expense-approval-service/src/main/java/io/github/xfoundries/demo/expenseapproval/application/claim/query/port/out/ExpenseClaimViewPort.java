@@ -9,7 +9,7 @@ import io.github.xfoundries.demo.expenseapproval.application.claim.query.view.Cl
 import io.github.xfoundries.demo.expenseapproval.domain.model.ClaimState;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
-import org.jfoundry.architecture.hexagonal.SecondaryPort;
+import io.huahill.jfoundry.architecture.hexagonal.SecondaryPort;
 
 @SecondaryPort
 public interface ExpenseClaimViewPort {

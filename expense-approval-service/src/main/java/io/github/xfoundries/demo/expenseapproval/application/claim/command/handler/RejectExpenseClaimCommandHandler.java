@@ -1,14 +1,16 @@
 package io.github.xfoundries.demo.expenseapproval.application.claim.command.handler;
 
+import io.huahill.jfoundry.application.ApplicationService;
 import io.github.xfoundries.demo.expenseapproval.application.identity.ApprovalRole;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.RejectExpenseClaimCommand;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.port.in.RejectExpenseClaimUseCase;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ClaimState;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaim;
 import io.github.xfoundries.demo.expenseapproval.domain.model.RejectionReason;
-import org.jfoundry.application.exception.InvalidArgumentException;
-import org.jfoundry.architecture.cqrs.CommandHandler;
+import io.huahill.jfoundry.application.exception.InvalidArgumentException;
+import io.huahill.jfoundry.architecture.cqrs.CommandHandler;
 
+@ApplicationService
 public class RejectExpenseClaimCommandHandler implements RejectExpenseClaimUseCase {
 
     private final ExpenseClaimCommandSupport support;
