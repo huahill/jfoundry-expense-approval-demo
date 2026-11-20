@@ -2,7 +2,7 @@ package io.github.xfoundries.demo.expenseapproval.application.payment.port.out;
 
 import java.time.Instant;
 
-import org.jfoundry.architecture.hexagonal.SecondaryPort;
+import io.huahill.jfoundry.architecture.hexagonal.SecondaryPort;
 
 @SecondaryPort
 public interface PaymentStatusProjectionPort {

@@ -9,18 +9,18 @@ import java.util.List;
 import io.github.xfoundries.demo.contracts.EventEnvelope;
 import io.github.xfoundries.demo.contracts.ExpenseClaimApprovedV1;
 import io.github.xfoundries.demo.payment.boot.PaymentProcessorSimulatorApplication;
-import org.jfoundry.application.inbox.InboxTemplate;
-import org.jfoundry.application.outbox.BackoffStrategy;
-import org.jfoundry.application.outbox.OutboxMessage;
-import org.jfoundry.application.outbox.OutboxMessageStatus;
-import org.jfoundry.application.outbox.OutboxMessageStore;
-import org.jfoundry.application.outbox.OutboxTemplate;
+import io.huahill.jfoundry.application.inbox.InboxTemplate;
+import io.huahill.jfoundry.application.outbox.BackoffStrategy;
+import io.huahill.jfoundry.application.outbox.OutboxMessage;
+import io.huahill.jfoundry.application.outbox.OutboxMessageStatus;
+import io.huahill.jfoundry.application.outbox.OutboxMessageStore;
+import io.huahill.jfoundry.application.outbox.OutboxTemplate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -35,8 +35,8 @@ class ExpenseClaimApprovedProcessorIntegrationTest {
 
     @Container
     @ServiceConnection
-    static final PostgreSQLContainer<?> DATABASE =
-            new PostgreSQLContainer<>("postgres:17-alpine");
+    static final PostgreSQLContainer DATABASE =
+            new PostgreSQLContainer("postgres:17-alpine");
 
     @Autowired ExpenseClaimApprovedProcessor processor;
     @Autowired InboxTemplate inboxTemplate;
@@ -104,10 +104,6 @@ class ExpenseClaimApprovedProcessorIntegrationTest {
             throw new IllegalStateException("outbox unavailable");
         }
 
-        @Override
-        public List<OutboxMessage> findDispatchable(int limit, Instant now) {
-            throw new UnsupportedOperationException();
-        }
 
         @Override
         public void markAsPublished(String eventId) {

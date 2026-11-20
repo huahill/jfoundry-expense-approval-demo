@@ -7,7 +7,7 @@ import io.github.xfoundries.demo.expenseapproval.application.identity.ApprovalAc
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseCategory;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseItemId;
-import org.jfoundry.architecture.cqrs.Command;
+import io.huahill.jfoundry.architecture.cqrs.Command;
 
 @Command
 public record UpdateExpenseItemCommand(

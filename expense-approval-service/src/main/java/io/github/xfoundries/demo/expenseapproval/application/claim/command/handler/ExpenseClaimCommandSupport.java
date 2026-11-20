@@ -8,11 +8,11 @@ import io.github.xfoundries.demo.expenseapproval.application.identity.ApprovalRo
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaim;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
-import org.jfoundry.application.exception.InvalidArgumentException;
-import org.jfoundry.application.exception.NotFoundException;
-import org.jfoundry.application.exception.ExternalAccessException;
-import org.jfoundry.application.transaction.TransactionCallback;
-import org.jfoundry.application.transaction.TransactionRunner;
+import io.huahill.jfoundry.application.exception.InvalidArgumentException;
+import io.huahill.jfoundry.application.exception.NotFoundException;
+import io.huahill.jfoundry.application.exception.ExternalAccessException;
+import io.huahill.jfoundry.application.transaction.TransactionCallback;
+import io.huahill.jfoundry.application.transaction.TransactionRunner;
 
 public final class ExpenseClaimCommandSupport {
 

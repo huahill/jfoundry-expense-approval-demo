@@ -9,10 +9,10 @@ import io.github.xfoundries.demo.contracts.EventEnvelope;
 import io.github.xfoundries.demo.contracts.ExpenseClaimApprovedV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaidV1;
 import io.github.xfoundries.demo.contracts.ReimbursementPaymentFailedV1;
-import org.jfoundry.application.inbox.InboxExecutionResult;
-import org.jfoundry.application.inbox.InboxTemplate;
-import org.jfoundry.application.outbox.OutboxAppendRequest;
-import org.jfoundry.application.outbox.OutboxTemplate;
+import io.huahill.jfoundry.application.inbox.InboxExecutionResult;
+import io.huahill.jfoundry.application.inbox.InboxTemplate;
+import io.huahill.jfoundry.application.outbox.OutboxAppendRequest;
+import io.huahill.jfoundry.application.outbox.OutboxTemplate;
 
 public final class ExpenseClaimApprovedProcessor {
 

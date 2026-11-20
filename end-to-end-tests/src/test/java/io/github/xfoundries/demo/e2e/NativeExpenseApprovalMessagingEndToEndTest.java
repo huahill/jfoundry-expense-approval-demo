@@ -16,10 +16,12 @@ import java.util.concurrent.TimeUnit;
 
 import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@EnabledIf("nativeExecutablesPresent")
 class NativeExpenseApprovalMessagingEndToEndTest
         extends AbstractExpenseApprovalMessagingEndToEndTest {
 
@@ -29,6 +31,16 @@ class NativeExpenseApprovalMessagingEndToEndTest
 
     private NativeApplicationProcess paymentApplication;
     private NativeApplicationProcess expenseApplication;
+
+
+    static boolean nativeExecutablesPresent() {
+        Path projectRoot = Path.of(System.getProperty("user.dir")).toAbsolutePath().normalize().getParent();
+        return projectRoot != null
+                && Files.isExecutable(projectRoot.resolve(
+                        "payment-processor-simulator/target/payment-processor-simulator"))
+                && Files.isExecutable(projectRoot.resolve(
+                        "expense-approval-service/target/expense-approval-service"));
+    }
 
     @Override
     protected void startApplicationsForTest() throws Exception {

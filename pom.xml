@@ -29,8 +29,8 @@
         <java.version>25</java.version>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jfoundry.version>1.0.0-SNAPSHOT</jfoundry.version>
-        <spring-boot.version>4.0.7</spring-boot.version>
+        <jfoundry.version>1.8.0-SNAPSHOT</jfoundry.version>
+        <spring-boot.version>4.1.2</spring-boot.version>
         <springdoc.version>3.0.3</springdoc.version>
         <native-build-tools.version>1.1.6</native-build-tools.version>
         <maven-shared-utils.version>3.4.2</maven-shared-utils.version>
@@ -51,17 +51,41 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Maven 4 warns when these imports disagree. Pin the versions selected by
+                 jfoundry-foundation-dependencies for the current jfoundry snapshot. -->
             <dependency>
-                <groupId>io.github.xfoundries</groupId>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>3.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.23.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.22.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.huahill</groupId>
                 <artifactId>jfoundry-dependencies</artifactId>
                 <version>${jfoundry.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>io.github.xfoundries</groupId>
-                <artifactId>jfoundry-spring-dependencies</artifactId>
+                <groupId>io.github.huahill</groupId>
+                <artifactId>jfoundry-spring-boot-dependencies</artifactId>
                 <version>${jfoundry.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>2.0.5</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -79,6 +103,11 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.5.0</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -3,7 +3,7 @@ package io.github.xfoundries.demo.expenseapproval.domain.model;
 import java.time.Instant;
 import java.util.Objects;
 
-import org.jfoundry.domain.event.BaseDomainEvent;
+import io.huahill.jfoundry.domain.event.BaseDomainEvent;
 
 public final class ExpenseClaimApproved extends BaseDomainEvent {
 
