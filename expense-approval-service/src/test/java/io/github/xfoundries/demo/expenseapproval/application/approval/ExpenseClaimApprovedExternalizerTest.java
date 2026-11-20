@@ -11,7 +11,7 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimApprov
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
-import org.jfoundry.application.event.externalization.ExternalizedEvent;
+import io.huahill.jfoundry.application.event.externalization.ExternalizedEvent;
 import org.junit.jupiter.api.Test;
 
 class ExpenseClaimApprovedExternalizerTest {

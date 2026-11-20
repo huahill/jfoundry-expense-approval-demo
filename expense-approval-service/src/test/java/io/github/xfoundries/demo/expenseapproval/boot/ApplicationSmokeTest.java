@@ -4,7 +4,7 @@ import javax.sql.DataSource;
 
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.port.in.CreateExpenseClaimUseCase;
 import io.github.xfoundries.demo.expenseapproval.support.PostgreSqlIntegrationTest;
-import org.jfoundry.application.transaction.TransactionRunner;
+import io.huahill.jfoundry.application.transaction.TransactionRunner;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

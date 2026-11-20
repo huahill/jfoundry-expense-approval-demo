@@ -1,11 +1,14 @@
 package io.github.xfoundries.demo.expenseapproval.application.claim.command.handler;
 
+import io.huahill.jfoundry.application.ApplicationService;
+
 import io.github.xfoundries.demo.expenseapproval.application.identity.ApprovalRole;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.ReopenExpenseClaimCommand;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.port.in.ReopenExpenseClaimUseCase;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaim;
-import org.jfoundry.architecture.cqrs.CommandHandler;
+import io.huahill.jfoundry.architecture.cqrs.CommandHandler;
 
+@ApplicationService
 public class ReopenExpenseClaimCommandHandler implements ReopenExpenseClaimUseCase {
 
     private final ExpenseClaimCommandSupport support;

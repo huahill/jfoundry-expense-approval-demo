@@ -2,7 +2,7 @@ package io.github.xfoundries.demo.expenseapproval.domain.model;
 
 import java.time.LocalDate;
 
-import org.jfoundry.domain.exception.DomainRuleViolationException;
+import io.huahill.jfoundry.domain.exception.DomainRuleViolationException;
 import org.jmolecules.ddd.types.Entity;
 
 public final class ExpenseItem implements Entity<ExpenseClaim, ExpenseItemId> {

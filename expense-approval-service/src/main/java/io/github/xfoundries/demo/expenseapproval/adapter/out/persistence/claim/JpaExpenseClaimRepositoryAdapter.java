@@ -6,8 +6,8 @@ import java.util.Collection;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaim;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
-import org.jfoundry.application.exception.ConflictException;
-import org.jfoundry.architecture.hexagonal.SecondaryAdapter;
+import io.huahill.jfoundry.application.exception.ConflictException;
+import io.huahill.jfoundry.architecture.hexagonal.SecondaryAdapter;
 import org.springframework.stereotype.Component;
 
 @SecondaryAdapter

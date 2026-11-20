@@ -1,3 +1,3 @@
-@org.jfoundry.architecture.hexagonal.Application
+@io.huahill.jfoundry.architecture.hexagonal.Application
 package io.github.xfoundries.demo.expenseapproval.application;
 

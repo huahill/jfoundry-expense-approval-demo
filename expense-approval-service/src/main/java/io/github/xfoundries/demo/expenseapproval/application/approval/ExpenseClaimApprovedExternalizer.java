@@ -5,8 +5,8 @@ import java.util.List;
 import io.github.xfoundries.demo.contracts.EventEnvelope;
 import io.github.xfoundries.demo.contracts.ExpenseClaimApprovedV1;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimApproved;
-import org.jfoundry.application.event.externalization.DomainEventExternalizer;
-import org.jfoundry.application.event.externalization.ExternalizedEvent;
+import io.huahill.jfoundry.application.event.externalization.DomainEventExternalizer;
+import io.huahill.jfoundry.application.event.externalization.ExternalizedEvent;
 
 public final class ExpenseClaimApprovedExternalizer implements DomainEventExternalizer<ExpenseClaimApproved> {
 

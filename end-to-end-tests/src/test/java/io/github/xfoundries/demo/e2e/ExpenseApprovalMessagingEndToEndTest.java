@@ -33,7 +33,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.KafkaContainer;
@@ -48,12 +48,12 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
     private static final String EMPLOYEE_ID = "employee-payment-success";
 
     @Container
-    protected static final PostgreSQLContainer<?> EXPENSE_DATABASE =
-            new PostgreSQLContainer<>("postgres:17-alpine");
+    protected static final PostgreSQLContainer EXPENSE_DATABASE =
+            new PostgreSQLContainer("postgres:17-alpine");
 
     @Container
-    protected static final PostgreSQLContainer<?> PAYMENT_DATABASE =
-            new PostgreSQLContainer<>("postgres:17-alpine");
+    protected static final PostgreSQLContainer PAYMENT_DATABASE =
+            new PostgreSQLContainer("postgres:17-alpine");
 
     @Container
     protected static final GenericContainer<?> REDIS =
@@ -88,8 +88,8 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
 
         JsonNode detail = awaitPaymentStatus(claimId, EMPLOYEE_ID, "PAID");
 
-        assertThat(detail.path("state").asText()).isEqualTo("APPROVED");
-        assertThat(detail.path("payment").path("paymentReference").asText())
+        assertThat(detail.path("state").asString()).isEqualTo("APPROVED");
+        assertThat(detail.path("payment").path("paymentReference").asString())
                 .isEqualTo("PAY-" + claimId);
     }
 
@@ -100,8 +100,8 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
 
         JsonNode detail = awaitPaymentStatus(claimId, employeeId, "FAILED");
 
-        assertThat(detail.path("state").asText()).isEqualTo("APPROVED");
-        assertThat(detail.path("payment").path("failureCode").asText())
+        assertThat(detail.path("state").asString()).isEqualTo("APPROVED");
+        assertThat(detail.path("payment").path("failureCode").asString())
                 .isEqualTo("SINGLE_PAYMENT_LIMIT_EXCEEDED");
         assertThat(detail.path("payment").path("paymentReference").isNull()).isTrue();
     }
@@ -112,16 +112,17 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
         String claimId = createAndApproveClaim(employeeId, new BigDecimal("1200.00"));
         awaitPaymentStatus(claimId, employeeId, "PAID");
 
-        String eventId = approvalEventId(claimId);
-        assertThat(paymentInboxCount(eventId)).isEqualTo(1);
+        String outboxEventId = approvalOutboxEventId(claimId);
+        String messageId = approvalMessageId(claimId);
+        assertThat(paymentInboxCount(messageId)).isEqualTo(1);
         assertThat(paymentResultOutboxCount(claimId)).isEqualTo(1);
 
-        requeueApprovalEvent(eventId);
+        requeueApprovalEvent(outboxEventId);
         awaitCondition("approval Outbox message to be republished", () ->
-                "PUBLISHED".equals(expenseOutboxStatus(eventId)));
+                "PUBLISHED".equals(expenseOutboxStatus(outboxEventId)));
         Thread.sleep(500);
 
-        assertThat(paymentInboxCount(eventId)).isEqualTo(1);
+        assertThat(paymentInboxCount(messageId)).isEqualTo(1);
         assertThat(paymentResultOutboxCount(claimId)).isEqualTo(1);
     }
 
@@ -152,8 +153,8 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
         }
 
         List<String> states = List.of(
-                claimDetail(firstClaim, employeeId).path("state").asText(),
-                claimDetail(secondClaim, employeeId).path("state").asText());
+                claimDetail(firstClaim, employeeId).path("state").asString(),
+                claimDetail(secondClaim, employeeId).path("state").asString());
         assertThat(states).containsExactlyInAnyOrder("APPROVED", "PENDING_FINANCE");
         assertThat(approvalOutboxCount(firstClaim) + approvalOutboxCount(secondClaim)).isEqualTo(1);
     }
@@ -171,7 +172,7 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
                 "finance-1", "FINANCE", null);
 
         assertThat(response.statusCode()).withFailMessage(response.body()).isEqualTo(422);
-        assertThat(claimDetail(overLimitClaim, employeeId).path("state").asText())
+        assertThat(claimDetail(overLimitClaim, employeeId).path("state").asString())
                 .isEqualTo("PENDING_FINANCE");
         assertThat(approvalOutboxCount(overLimitClaim)).isZero();
     }
@@ -191,7 +192,7 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
         String claimId = createReadyForManagerApproval(employeeId, amount);
         assertStatus(send("POST", "/api/claims/" + claimId + "/manager-approval",
                 "manager-1", "MANAGER", null), 204);
-        assertThat(claimDetail(claimId, employeeId).path("state").asText())
+        assertThat(claimDetail(claimId, employeeId).path("state").asString())
                 .isEqualTo("PENDING_FINANCE");
         return claimId;
     }
@@ -241,7 +242,7 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
                     "GET", "/api/claims/" + claimId, employeeId, "EMPLOYEE", null);
             if (response.statusCode() == 200) {
                 last = objectMapper.readTree(response.body());
-                if (expected.equals(last.path("payment").path("status").asText())) {
+                if (expected.equals(last.path("payment").path("status").asString())) {
                     return last;
                 }
             }
@@ -269,12 +270,23 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
         assertThat(response.statusCode()).withFailMessage(response.body()).isEqualTo(expected);
     }
 
-    private static String approvalEventId(String claimId) throws Exception {
+    private static String approvalOutboxEventId(String claimId) throws Exception {
         return queryString(
                 EXPENSE_DATABASE,
                 "select event_id from jfoundry_outbox_event "
                         + "where aggregate_id = ? and payload_type = 'expense-approval.claim-approved.v1'",
                 claimId);
+    }
+
+    private String approvalMessageId(String claimId) throws Exception {
+        String payload = queryString(
+                EXPENSE_DATABASE,
+                "select payload_json from jfoundry_outbox_event "
+                        + "where aggregate_id = ? and payload_type = 'expense-approval.claim-approved.v1'",
+                claimId);
+        String messageId = objectMapper.readTree(payload).path("eventId").asString();
+        assertThat(messageId).isNotBlank();
+        return messageId;
     }
 
     private static String expenseOutboxStatus(String eventId) throws Exception {
@@ -320,7 +332,7 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
     }
 
     private static String queryString(
-            PostgreSQLContainer<?> database, String sql, String argument) throws Exception {
+            PostgreSQLContainer database, String sql, String argument) throws Exception {
         try (Connection connection = connection(database);
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, argument);
@@ -332,7 +344,7 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
     }
 
     private static int queryInt(
-            PostgreSQLContainer<?> database, String sql, String argument) throws Exception {
+            PostgreSQLContainer database, String sql, String argument) throws Exception {
         try (Connection connection = connection(database);
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, argument);
@@ -343,7 +355,7 @@ abstract class AbstractExpenseApprovalMessagingEndToEndTest {
         }
     }
 
-    private static Connection connection(PostgreSQLContainer<?> database) throws Exception {
+    private static Connection connection(PostgreSQLContainer database) throws Exception {
         return DriverManager.getConnection(
                 database.getJdbcUrl(), database.getUsername(), database.getPassword());
     }

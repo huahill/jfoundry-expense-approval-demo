@@ -25,8 +25,8 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import org.jfoundry.architecture.hexagonal.SecondaryAdapter;
-import org.jfoundry.infrastructure.persistence.AbstractPersistenceAdapter;
+import io.huahill.jfoundry.architecture.hexagonal.SecondaryAdapter;
+import io.huahill.jfoundry.infrastructure.persistence.AbstractPersistenceAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,13 +1,16 @@
 package io.github.xfoundries.demo.expenseapproval.application.claim.command.handler;
 
+import io.huahill.jfoundry.application.ApplicationService;
+
 import io.github.xfoundries.demo.expenseapproval.application.identity.ApprovalRole;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.UpdateExpenseItemCommand;
 import io.github.xfoundries.demo.expenseapproval.application.claim.command.port.in.UpdateExpenseItemUseCase;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaim;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseItem;
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
-import org.jfoundry.architecture.cqrs.CommandHandler;
+import io.huahill.jfoundry.architecture.cqrs.CommandHandler;
 
+@ApplicationService
 public class UpdateExpenseItemCommandHandler implements UpdateExpenseItemUseCase {
 
     private final ExpenseClaimCommandSupport support;

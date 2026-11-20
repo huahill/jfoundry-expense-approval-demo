@@ -3,7 +3,7 @@ package io.github.xfoundries.demo.expenseapproval.adapter.in.web.claim;
 import io.github.xfoundries.demo.expenseapproval.application.identity.ApprovalActor;
 import io.github.xfoundries.demo.expenseapproval.application.identity.ApprovalRole;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
-import org.jfoundry.application.exception.InvalidArgumentException;
+import io.huahill.jfoundry.application.exception.InvalidArgumentException;
 import org.springframework.stereotype.Component;
 
 @Component

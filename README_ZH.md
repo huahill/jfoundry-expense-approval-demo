@@ -4,15 +4,15 @@
 
 > **当前分支：** 本 README 和当前检出的 `hexagonal/jpa` 分支描述 Hexagonal Architecture 实现。
 > Onion Simple 实现单独维护在
-> [`onion-architecture`](https://github.com/xfoundries/jfoundry-expense-approval-demo/tree/onion-architecture) 分支。
+> [`onion-architecture`](https://github.com/huahill/jfoundry-expense-approval-demo/tree/onion-architecture) 分支。
 
 这是一个业务轻量、架构链路完整的 Demo，用于验证 AI Agent 能否借助
-[domain-architecture-skills](https://github.com/xfoundries/domain-architecture-skills) 插件和可选的 [jfoundry](https://github.com/xfoundries/jfoundry)，从完整需求出发完成领域建模、架构决策、
+[domain-architecture-skills](https://github.com/huahill/domain-architecture-skills) 插件和可选的 [jfoundry](https://github.com/huahill/jfoundry)，从完整需求出发完成领域建模、架构决策、
 实现与自动化验收。项目刻意不扩展组织、审批矩阵等复杂业务。当前 `hexagonal/jpa` 分支重点验证 DDD、
 Hexagonal Architecture、CQRS、Outbox、Inbox、Kafka、分布式锁和持久化能力能否正确组合；
 独立 Onion 分支复用相同业务与验收基线验证 Onion Simple，不改变 `hexagonal/jpa` 的架构风格。
 
-本项目明确选择了本地 jfoundry，以验证插件的 `using-jfoundry` 落地阶段。
+本项目明确使用 jfoundry，以验证插件的 `using-jfoundry` 落地阶段。
 **jfoundry 不是 `domain-architecture` 插件的必备条件**；不使用 jfoundry 的项目仍可独立使用
 领域建模和架构指导能力。
 
@@ -21,7 +21,7 @@ Hexagonal Architecture、CQRS、Outbox、Inbox、Kafka、分布式锁和持久�
 | 分支 | 架构风格 | 本 README 中的状态 |
 |------|----------|--------------------|
 | `hexagonal/jpa` | Hexagonal Architecture | 仓库默认分支上的当前实现；下文包结构和运行时说明均以此分支为准。 |
-| [`onion-architecture`](https://github.com/xfoundries/jfoundry-expense-approval-demo/tree/onion-architecture) | Onion Simple Architecture | 单独维护的验证变体，拥有自己的 README 和架构语义。 |
+| [`onion-architecture`](https://github.com/huahill/jfoundry-expense-approval-demo/tree/onion-architecture) | Onion Simple Architecture | 单独维护的验证变体，拥有自己的 README 和架构语义。 |
 
 除非某一节明确写明“跨变体”或直接点名 Onion 分支，本 README 中关于 `application`、Port、
 Adapter、包结构和依赖方向的说明都指当前 Hexagonal `hexagonal/jpa` 分支。
@@ -41,7 +41,7 @@ jfoundry-expense-approval-demo/
 
 ## 架构与技术（`hexagonal/jpa`：Hexagonal）
 
-- Java 25、Maven、Spring Boot 3.5.16、jfoundry 1.0.0-SNAPSHOT
+- Java 25、Maven、Spring Boot 4.1.2、jfoundry 1.8.0-SNAPSHOT
 - 费用审批服务：Jakarta Persistence、PostgreSQL 17、Flyway
 - 支付处理模拟器：MyBatis-Plus、PostgreSQL 17、Flyway
 - Kafka、Redis/Redisson、Testcontainers
@@ -107,11 +107,13 @@ HTTP 命令
 ## 前置条件
 
 - JDK 25
-- Maven 3.9+
+- Maven 3.9+；已用 Maven 4.0.0-rc-7 验证
 - Docker 可用；容器测试会启动两个 PostgreSQL、Kafka 和 Redis
-- 本地 jfoundry 源码位于 `/Users/huangxiao/Workspace/mine/jfoundry`
 
-首次构建前安装当前本地 jfoundry：
+Demo 使用 `io.github.huahill:jfoundry-*` 的 `1.8.0-SNAPSHOT`。根 POM 从 Sonatype Central Snapshots
+解析该快照，因此不需要预先在本地安装 jfoundry。
+
+如果要验证尚未发布的 jfoundry 检出，先安装该检出再构建 Demo：
 
 ```bash
 cd /Users/huangxiao/Workspace/mine/jfoundry

@@ -36,7 +36,7 @@ import io.github.xfoundries.demo.expenseapproval.adapter.in.web.claim.response.C
 import io.github.xfoundries.demo.expenseapproval.adapter.in.web.claim.response.ClaimResponses.PageResponse;
 import io.github.xfoundries.demo.expenseapproval.adapter.in.web.claim.response.ClaimResponses.SummaryResponse;
 import jakarta.validation.Valid;
-import org.jfoundry.architecture.hexagonal.PrimaryAdapter;
+import io.huahill.jfoundry.architecture.hexagonal.PrimaryAdapter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

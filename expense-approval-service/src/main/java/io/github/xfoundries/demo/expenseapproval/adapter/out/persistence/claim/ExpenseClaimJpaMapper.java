@@ -12,7 +12,7 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseItem;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseItemId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
-import org.jfoundry.infrastructure.persistence.jpa.JpaAggregateMapper;
+import io.huahill.jfoundry.infrastructure.persistence.jpa.JpaAggregateMapper;
 
 final class ExpenseClaimJpaMapper
         implements JpaAggregateMapper<ExpenseClaim, ExpenseClaimId, ExpenseClaimEntity, String> {
