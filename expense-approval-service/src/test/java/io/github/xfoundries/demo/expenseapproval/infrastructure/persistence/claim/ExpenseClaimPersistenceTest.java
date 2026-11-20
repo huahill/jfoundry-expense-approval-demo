@@ -18,11 +18,14 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseItemId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
-import org.jfoundry.application.exception.ConflictException;
+import io.huahill.jfoundry.application.exception.ConflictException;
 import io.github.xfoundries.demo.expenseapproval.boot.ExpenseApprovalApplication;
 import io.github.xfoundries.demo.expenseapproval.support.PostgreSqlIntegrationTest;
 import org.junit.jupiter.api.Test;
+import io.github.xfoundries.demo.expenseapproval.support.ApplicationBoundaryTestConfiguration;
+import io.github.xfoundries.demo.expenseapproval.support.TestApplicationBoundary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = ExpenseApprovalApplication.class)
+@Import(ApplicationBoundaryTestConfiguration.class)
 @Transactional
 class ExpenseClaimPersistenceTest extends PostgreSqlIntegrationTest {
 
@@ -45,6 +49,9 @@ class ExpenseClaimPersistenceTest extends PostgreSqlIntegrationTest {
     private ExpenseClaimRepository repository;
 
     @Autowired
+    private TestApplicationBoundary boundary;
+
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -54,7 +61,7 @@ class ExpenseClaimPersistenceTest extends PostgreSqlIntegrationTest {
     void savesAndRestoresCompleteAggregate() {
         ExpenseClaim original = submittedHighValueClaim("claim-save");
 
-        repository.add(original);
+        boundary.run(() -> repository.add(original));
         ExpenseClaim restored = repository.findById(original.id());
 
         assertThat(restored.id()).isEqualTo(original.id());
@@ -72,10 +79,10 @@ class ExpenseClaimPersistenceTest extends PostgreSqlIntegrationTest {
     @Test
     void updatingAggregateReplacesItemsAndAppendsActions() {
         ExpenseClaim claim = submittedHighValueClaim("claim-update");
-        repository.add(claim);
+        boundary.run(() -> repository.add(claim));
         claim.approveByManager(MANAGER, NOW.plusSeconds(3));
 
-        repository.modify(claim);
+        boundary.run(() -> repository.modify(claim));
         ExpenseClaim restored = repository.findById(claim.id());
 
         assertThat(restored.items()).hasSize(1);
@@ -94,12 +101,11 @@ class ExpenseClaimPersistenceTest extends PostgreSqlIntegrationTest {
     void duplicateAddFailsWithoutImplicitlyModifyingExistingAggregate() {
         TransactionTemplate transaction = new TransactionTemplate(transactionManager);
         ExpenseClaim original = submittedHighValueClaim("claim-duplicate");
-        transaction.executeWithoutResult(status -> repository.add(original));
+        transaction.executeWithoutResult(status -> boundary.run(() -> repository.add(original)));
 
         assertThatThrownBy(() -> transaction.executeWithoutResult(
-                status -> repository.add(submittedHighValueClaim("claim-duplicate"))))
-                .isInstanceOf(ConflictException.class)
-                .hasMessageContaining(original.id().value());
+                status -> boundary.run(() -> repository.add(submittedHighValueClaim("claim-duplicate")))))
+                .isInstanceOf(org.springframework.dao.DuplicateKeyException.class);
 
         transaction.executeWithoutResult(status -> assertThat(repository.findById(original.id()).actions())
                 .extracting(action -> action.type())
@@ -121,7 +127,7 @@ class ExpenseClaimPersistenceTest extends PostgreSqlIntegrationTest {
                         null),
                 NOW.plusSeconds(1));
 
-        assertThatThrownBy(() -> repository.modify(missing))
+        assertThatThrownBy(() -> boundary.run(() -> repository.modify(missing)))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("not tracked");
 
@@ -136,7 +142,7 @@ class ExpenseClaimPersistenceTest extends PostgreSqlIntegrationTest {
     void concurrentTransactionsCannotBothModifyTheSameLoadedVersion() throws Exception {
         TransactionTemplate transaction = new TransactionTemplate(transactionManager);
         ExpenseClaim original = submittedHighValueClaim("claim-concurrent");
-        transaction.executeWithoutResult(status -> repository.add(original));
+        transaction.executeWithoutResult(status -> boundary.run(() -> repository.add(original)));
 
         CountDownLatch staleLoaded = new CountDownLatch(1);
         CountDownLatch winnerCommitted = new CountDownLatch(1);
@@ -151,7 +157,7 @@ class ExpenseClaimPersistenceTest extends PostgreSqlIntegrationTest {
                                 MANAGER,
                                 io.github.xfoundries.demo.expenseapproval.domain.model.RejectionReason.of("Stale"),
                                 NOW.plusSeconds(4));
-                        repository.modify(stale);
+                        boundary.run(() -> repository.modify(stale));
                     });
                     return null;
                 } catch (Throwable failure) {
@@ -163,7 +169,7 @@ class ExpenseClaimPersistenceTest extends PostgreSqlIntegrationTest {
             transaction.executeWithoutResult(status -> {
                 ExpenseClaim winner = repository.findById(original.id());
                 winner.approveByManager(MANAGER, NOW.plusSeconds(3));
-                repository.modify(winner);
+                boundary.run(() -> repository.modify(winner));
             });
             winnerCommitted.countDown();
 
@@ -188,14 +194,14 @@ class ExpenseClaimPersistenceTest extends PostgreSqlIntegrationTest {
                 )
                 """);
         ExpenseClaim claim = submittedHighValueClaim("claim-history");
-        repository.add(claim);
+        boundary.run(() -> repository.add(claim));
         jdbcTemplate.update(
                 "insert into claim_action_reference(id, action_id) values (?, ?)",
                 "reference-1",
                 claim.id().value() + ":0");
 
         claim.approveByManager(MANAGER, NOW.plusSeconds(3));
-        repository.modify(claim);
+        boundary.run(() -> repository.modify(claim));
 
         assertThat(jdbcTemplate.queryForObject(
                 "select count(*) from claim_action where claim_id = ?",

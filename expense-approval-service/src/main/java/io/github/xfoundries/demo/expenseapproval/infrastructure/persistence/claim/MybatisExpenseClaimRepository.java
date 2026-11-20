@@ -13,9 +13,7 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseItemId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
-import org.jfoundry.application.exception.ConflictException;
-import org.jfoundry.infrastructure.persistence.mybatis.MybatisPlusAggregateRepository;
-import org.springframework.dao.DuplicateKeyException;
+import io.huahill.jfoundry.infrastructure.persistence.mybatis.MybatisPlusAggregateRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -52,31 +50,23 @@ public class MybatisExpenseClaimRepository
     }
 
     @Override
-    protected void doAdd(ExpenseClaim claim) {
-        insertAggregate(
-                claim,
-                ROOT_DATA_MAPPER.toData(claim),
-                root -> {
-                    insertItems(root.getId(), claim.items());
-                    insertActions(root.getId(), claim.actions(), 0);
-                },
-                failure -> translateRootInsertFailure(claim, failure));
+    protected void afterInsert(ExpenseClaim claim, ExpenseClaimData root) {
+        insertItems(root.getId(), claim.items());
+        insertActions(root.getId(), claim.actions(), 0);
     }
 
     @Override
-    protected void doModify(ExpenseClaim claim) {
-        updateAggregate(claim, ROOT_DATA_MAPPER.toData(claim), root -> {
-            itemMapper.deleteByClaimId(root.getId());
-            insertItems(root.getId(), claim.items());
+    protected void afterUpdate(ExpenseClaim claim, ExpenseClaimData root) {
+        itemMapper.deleteByClaimId(root.getId());
+        insertItems(root.getId(), claim.items());
 
-            int persistedActionCount = actionMapper.selectByClaimId(root.getId()).size();
-            if (persistedActionCount > claim.actions().size()) {
-                throw new IllegalStateException(
-                        "Persisted action history is longer than aggregate history: "
-                                + claim.id().value());
-            }
-            insertActions(root.getId(), claim.actions(), persistedActionCount);
-        });
+        int persistedActionCount = actionMapper.selectByClaimId(root.getId()).size();
+        if (persistedActionCount > claim.actions().size()) {
+            throw new IllegalStateException(
+                    "Persisted action history is longer than aggregate history: "
+                            + claim.id().value());
+        }
+        insertActions(root.getId(), claim.actions(), persistedActionCount);
     }
 
     private void insertItems(String claimId, List<ExpenseItem> items) {
@@ -152,13 +142,4 @@ public class MybatisExpenseClaimRepository
                 root.isFinanceApprovalRequired());
     }
 
-    private static RuntimeException translateRootInsertFailure(
-            ExpenseClaim claim,
-            RuntimeException failure) {
-        if (failure instanceof DuplicateKeyException duplicateKey) {
-            return new ConflictException(
-                    "Expense claim already exists: " + claim.id().value(), duplicateKey);
-        }
-        return failure;
-    }
 }

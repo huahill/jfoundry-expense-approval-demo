@@ -8,9 +8,9 @@ import io.github.xfoundries.demo.expenseapproval.application.claim.query.ClaimVi
 import io.github.xfoundries.demo.expenseapproval.application.claim.query.ClaimViews.PageResult;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ClaimState;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
-import org.jfoundry.application.ApplicationService;
-import org.jfoundry.application.exception.InvalidArgumentException;
-import org.jfoundry.application.exception.NotFoundException;
+import io.huahill.jfoundry.application.ApplicationService;
+import io.huahill.jfoundry.application.exception.InvalidArgumentException;
+import io.huahill.jfoundry.application.exception.NotFoundException;
 
 @ApplicationService
 public class ExpenseClaimQueryService implements ExpenseClaimQueries {

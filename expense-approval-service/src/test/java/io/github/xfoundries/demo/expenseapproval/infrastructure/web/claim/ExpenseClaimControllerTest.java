@@ -16,9 +16,9 @@ import io.github.xfoundries.demo.expenseapproval.boot.ExpenseApprovalApplication
 import io.github.xfoundries.demo.expenseapproval.domain.model.ClaimState;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.support.PostgreSqlIntegrationTest;
-import org.jfoundry.application.exception.NotFoundException;
-import org.jfoundry.domain.exception.DomainRuleViolationException;
-import org.jfoundry.domain.exception.DomainStateException;
+import io.huahill.jfoundry.application.exception.NotFoundException;
+import io.huahill.jfoundry.domain.exception.DomainRuleViolationException;
+import io.huahill.jfoundry.domain.exception.DomainStateException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -103,7 +103,7 @@ class ExpenseClaimControllerTest extends PostgreSqlIntegrationTest {
         mockMvc.perform(post("/api/claims/claim-1/submit")
                         .header("X-User-Id", "employee-1")
                         .header("X-User-Role", "EMPLOYEE"))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.status").value(422));
     }
 

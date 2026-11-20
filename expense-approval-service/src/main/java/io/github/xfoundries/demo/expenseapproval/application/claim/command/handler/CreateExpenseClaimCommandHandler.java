@@ -1,5 +1,7 @@
 package io.github.xfoundries.demo.expenseapproval.application.claim.command.handler;
 
+import io.huahill.jfoundry.application.ApplicationService;
+
 import java.time.Clock;
 
 import io.github.xfoundries.demo.expenseapproval.application.identity.ApprovalRole;
@@ -7,11 +9,12 @@ import io.github.xfoundries.demo.expenseapproval.application.claim.command.Creat
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaim;
 import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
-import org.jfoundry.application.exception.ExternalAccessException;
-import org.jfoundry.application.exception.InvalidArgumentException;
-import org.jfoundry.application.transaction.TransactionRunner;
-import org.jfoundry.architecture.cqrs.CommandHandler;
+import io.huahill.jfoundry.application.exception.ExternalAccessException;
+import io.huahill.jfoundry.application.exception.InvalidArgumentException;
+import io.huahill.jfoundry.application.transaction.TransactionRunner;
+import io.huahill.jfoundry.architecture.cqrs.CommandHandler;
 
+@ApplicationService
 public class CreateExpenseClaimCommandHandler {
 
     private final ExpenseClaimRepository repository;

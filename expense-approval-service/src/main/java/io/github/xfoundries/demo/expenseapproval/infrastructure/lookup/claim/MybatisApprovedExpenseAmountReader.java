@@ -6,7 +6,7 @@ import io.github.xfoundries.demo.expenseapproval.application.approval.ApprovedEx
 import io.github.xfoundries.demo.expenseapproval.domain.model.Money;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import io.github.xfoundries.demo.expenseapproval.infrastructure.persistence.claim.ExpenseClaimMapper;
-import org.jfoundry.infrastructure.persistence.AbstractPersistenceAdapter;
+import io.huahill.jfoundry.infrastructure.persistence.AbstractPersistenceAdapter;
 import org.springframework.stereotype.Repository;
 
 @Repository

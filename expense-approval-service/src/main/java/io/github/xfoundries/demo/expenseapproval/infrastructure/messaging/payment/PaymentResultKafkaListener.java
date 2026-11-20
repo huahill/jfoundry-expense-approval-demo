@@ -27,7 +27,7 @@ public class PaymentResultKafkaListener {
             autoStartup = "${expense-approval.messaging.kafka-listener-enabled:false}")
     public void onMessage(String json) throws Exception {
         JsonNode envelope = objectMapper.readTree(json);
-        String eventType = envelope.path("eventType").asText();
+        String eventType = envelope.path("eventType").asString();
         if ("ReimbursementPaid".equals(eventType)) {
             projector.projectPaid(objectMapper.readValue(
                     json, new TypeReference<EventEnvelope<ReimbursementPaidV1>>() {

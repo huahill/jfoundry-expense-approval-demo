@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.jfoundry.domain.entity.agg.BaseAggregateRoot;
-import org.jfoundry.domain.exception.DomainRuleViolationException;
-import org.jfoundry.domain.exception.DomainStateException;
+import io.huahill.jfoundry.domain.entity.agg.BaseAggregateRoot;
+import io.huahill.jfoundry.domain.exception.DomainRuleViolationException;
+import io.huahill.jfoundry.domain.exception.DomainStateException;
 
 public final class ExpenseClaim extends BaseAggregateRoot<ExpenseClaim, ExpenseClaimId> {
 

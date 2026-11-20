@@ -1,2 +1,2 @@
-@org.jfoundry.architecture.onion.simplified.InfrastructureRing
+@io.huahill.jfoundry.architecture.onion.simplified.InfrastructureRing
 package io.github.xfoundries.demo.expenseapproval.infrastructure;

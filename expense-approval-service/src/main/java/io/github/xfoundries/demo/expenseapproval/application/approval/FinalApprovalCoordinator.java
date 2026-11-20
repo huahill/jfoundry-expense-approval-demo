@@ -16,15 +16,15 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.ExpenseClaimId;
 import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
 import io.github.xfoundries.demo.expenseapproval.domain.policy.MonthlyExpenseLimitPolicy;
-import org.jfoundry.application.ApplicationService;
-import org.jfoundry.application.exception.ExternalAccessException;
-import org.jfoundry.application.exception.InvalidArgumentException;
-import org.jfoundry.application.exception.NotFoundException;
-import org.jfoundry.application.lock.LockExecutor;
-import org.jfoundry.application.lock.LockKey;
-import org.jfoundry.application.lock.LockOptions;
-import org.jfoundry.application.transaction.TransactionCallback;
-import org.jfoundry.application.transaction.TransactionRunner;
+import io.huahill.jfoundry.application.ApplicationService;
+import io.huahill.jfoundry.application.exception.ExternalAccessException;
+import io.huahill.jfoundry.application.exception.InvalidArgumentException;
+import io.huahill.jfoundry.application.exception.NotFoundException;
+import io.huahill.jfoundry.application.lock.LockExecutor;
+import io.huahill.jfoundry.application.lock.LockKey;
+import io.huahill.jfoundry.application.lock.LockOptions;
+import io.huahill.jfoundry.application.transaction.TransactionCallback;
+import io.huahill.jfoundry.application.transaction.TransactionRunner;
 
 @ApplicationService
 public class FinalApprovalCoordinator {

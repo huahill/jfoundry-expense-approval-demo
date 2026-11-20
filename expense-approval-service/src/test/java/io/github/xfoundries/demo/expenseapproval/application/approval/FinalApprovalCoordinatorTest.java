@@ -26,13 +26,13 @@ import io.github.xfoundries.demo.expenseapproval.domain.model.UserId;
 import io.github.xfoundries.demo.expenseapproval.domain.policy.MonthlyExpenseLimitExceeded;
 import io.github.xfoundries.demo.expenseapproval.domain.policy.MonthlyExpenseLimitPolicy;
 import io.github.xfoundries.demo.expenseapproval.domain.repository.ExpenseClaimRepository;
-import org.jfoundry.application.lock.DistributedLockClient;
-import org.jfoundry.application.ApplicationService;
-import org.jfoundry.application.lock.LockExecutor;
-import org.jfoundry.application.lock.LockHandle;
-import org.jfoundry.application.transaction.TransactionCallback;
-import org.jfoundry.application.transaction.TransactionOptions;
-import org.jfoundry.application.transaction.TransactionRunner;
+import io.huahill.jfoundry.application.lock.DistributedLockClient;
+import io.huahill.jfoundry.application.ApplicationService;
+import io.huahill.jfoundry.application.lock.LockExecutor;
+import io.huahill.jfoundry.application.lock.LockHandle;
+import io.huahill.jfoundry.application.transaction.TransactionCallback;
+import io.huahill.jfoundry.application.transaction.TransactionOptions;
+import io.huahill.jfoundry.application.transaction.TransactionRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -156,8 +156,7 @@ class FinalApprovalCoordinatorTest {
         }
 
         @Override
-        public <T> T call(TransactionOptions options, TransactionCallback<T> callback)
-                throws Exception {
+        public <T> T call(TransactionOptions options, TransactionCallback<T> callback) {
             boundaries.add("transaction");
             return callback.execute();
         }

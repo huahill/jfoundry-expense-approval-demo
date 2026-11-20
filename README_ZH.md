@@ -4,7 +4,7 @@
 
 > **当前分支：** 本 README 和当前检出的 `onion/mybatis-plus` 分支描述 Onion Simple
 > Architecture 实现。Hexagonal 实现单独维护在
-> [`hexagonal/mybatis-plus`](https://github.com/xfoundries/jfoundry-expense-approval-demo/tree/hexagonal/mybatis-plus) 分支。
+> [`hexagonal/mybatis-plus`](https://github.com/huahill/jfoundry-expense-approval-demo/tree/hexagonal/mybatis-plus) 分支。
 
 这是一个业务轻量、架构链路完整的 Demo，用于验证 AI Agent 能否借助
 `domain-architecture` 插件和可选的 jfoundry，从完整需求出发完成领域建模、架构决策、
@@ -13,7 +13,7 @@
 正确组合；独立 `hexagonal/mybatis-plus` 分支复用相同业务与验收基线验证 Hexagonal Architecture，不改变本分支的
 架构风格。
 
-本项目明确选择了本地 jfoundry，以验证插件的 `using-jfoundry` 落地阶段。
+本项目明确使用 jfoundry，以验证插件的 `using-jfoundry` 落地阶段。
 **jfoundry 不是 `domain-architecture` 插件的必备条件**；不使用 jfoundry 的项目仍可独立使用
 领域建模和架构指导能力。
 
@@ -22,7 +22,7 @@
 | 分支 | 架构风格 | 本 README 中的状态 |
 |------|----------|--------------------|
 | `onion/mybatis-plus` | Onion Simple Architecture | 当前实现；下文 Ring、包结构和依赖说明均以此分支为准。 |
-| [`hexagonal/mybatis-plus`](https://github.com/xfoundries/jfoundry-expense-approval-demo/tree/hexagonal/mybatis-plus) | Hexagonal Architecture | 单独维护的默认分支变体，拥有自己的 README 和架构语义。 |
+| [`hexagonal/mybatis-plus`](https://github.com/huahill/jfoundry-expense-approval-demo/tree/hexagonal/mybatis-plus) | Hexagonal Architecture | 单独维护的默认分支变体，拥有自己的 README 和架构语义。 |
 
 除非某一节明确写明“跨变体”或直接点名 `hexagonal/mybatis-plus`，本 README 中关于 Ring、包结构、命名和依赖方向的
 说明都指当前 Onion Simple 分支。
@@ -42,7 +42,7 @@ jfoundry-expense-approval-demo/
 
 ## 架构与技术（`onion/mybatis-plus`：Onion Simple）
 
-- Java 25、Maven、Spring Boot 3.5.16、jfoundry 1.0.0-SNAPSHOT
+- Java 25、Maven、Spring Boot 4.1.2、jfoundry 1.8.0-SNAPSHOT
 - MyBatis-Plus、PostgreSQL 17、Flyway
 - Kafka、Redis/Redisson、Testcontainers
 - JUnit 5、ArchUnit、Awaitility
@@ -103,11 +103,13 @@ HTTP 命令
 ## 前置条件
 
 - JDK 25
-- Maven 3.9+
+- Maven 3.9+；已用 Maven 4.0.0-rc-7 验证
 - Docker 可用；容器测试会启动两个 PostgreSQL、Kafka 和 Redis
-- 本地 jfoundry 源码位于 `/Users/huangxiao/Workspace/mine/jfoundry`
 
-首次构建前安装当前本地 jfoundry：
+Demo 使用 `io.github.huahill:jfoundry-*` 的 `1.8.0-SNAPSHOT`。根 POM 从 Sonatype Central Snapshots
+解析该快照，因此不需要预先在本地安装 jfoundry。
+
+如果要验证尚未发布的 jfoundry 检出，先安装该检出再构建 Demo：
 
 ```bash
 cd /Users/huangxiao/Workspace/mine/jfoundry
